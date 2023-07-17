@@ -1575,7 +1575,7 @@ _PyEval_EvalFrameDefault(PyThreadState *tstate, PyFrameObject *f, int throwflag)
     PyObject *consts;
     _PyOpcache *co_opcache;
 
-    YkMT *mt = yk_mt();
+    YkMT *mt = yk_mt_new(NULL);
 
 #ifdef LLTRACE
     _Py_IDENTIFIER(__ltrace__);
@@ -3842,9 +3842,7 @@ _PyEval_EvalFrameDefault(PyThreadState *tstate, PyFrameObject *f, int throwflag)
             PREDICTED(JUMP_ABSOLUTE);
             JUMPTO(oparg);
             CHECK_EVAL_BREAKER();
-            // FIXME: the following line currently causes a panic as the mapper
-            // panics as soon as the hot threshold is exceeded.
-            // yk_control_point(mt, &co->co_yklocations[next_instr - first_instr]);
+            yk_mt_control_point(mt, &co->co_yklocations[next_instr - first_instr]);
             DISPATCH();
         }
 

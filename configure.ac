@@ -1569,11 +1569,11 @@ then
                     OPT="-g -O0 -Wall"
                 fi
 	    else
-		OPT="-g $WRAP -O3 -Wall"
+		OPT="-g $WRAP -Wall"
 	    fi
 	    ;;
 	*)
-	    OPT="-O3 -Wall"
+	    OPT="-Wall"
 	    ;;
 	esac
 
@@ -5934,8 +5934,8 @@ fi
 AC_SUBST(TEST_MODULES)
 
 # yk integration
-AC_CHECK_HEADER([yk.h], [], [AC_MSG_ERROR([yk installation not found])])
-AC_CHECK_LIB([ykcapi], [yk_mt], [], [AC_MSG_ERROR([yk installation not found])])
+AC_CHECK_HEADER([yk.h], [], [AC_MSG_ERROR([yk installation not found (no yk.h)])])
+AC_CHECK_LIB([ykcapi], [yk_mt_new], [], [AC_MSG_ERROR([yk installation not found (yk_mt_new missing)])])
 LINKFORSHARED="-lykcapi $LINKFORSHARED"
 
 # generate output files

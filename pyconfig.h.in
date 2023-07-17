@@ -628,6 +628,9 @@
 /* Define to 1 if you have the <libutil.h> header file. */
 #undef HAVE_LIBUTIL_H
 
+/* Define to 1 if you have the `ykcapi' library (-lykcapi). */
+#undef HAVE_LIBYKCAPI
+
 /* Define if you have the 'link' function. */
 #undef HAVE_LINK
 

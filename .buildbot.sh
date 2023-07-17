@@ -2,7 +2,6 @@
 
 set -e
 
-# Install rustup.
 export CARGO_HOME="`pwd`/.cargo"
 export RUSTUP_HOME="`pwd`/.rustup"
 export RUSTUP_INIT_SKIP_PATH_CHECK="yes"
@@ -12,37 +11,31 @@ sh rustup.sh --default-host x86_64-unknown-linux-gnu \
     --no-modify-path \
     --profile minimal \
     -y
-export PATH=${CARGO_HOME}/bin/:$PATH
+export PATH=`pwd`/.cargo/bin/:$PATH
 
-git clone https://github.com/ykjit/ykllvm
-cd ykllvm
-mkdir build
-cd build
-cmake -DCMAKE_INSTALL_PREFIX=`pwd`/../inst \
-    -DLLVM_INSTALL_UTILS=On \
-    -DCMAKE_BUILD_TYPE=release \
-    -DLLVM_ENABLE_ASSERTIONS=On \
-    -DLLVM_ENABLE_PROJECTS="lld;clang" \
-    ../llvm
-make -j `nproc` install
-export PATH=`pwd`/../inst/bin:${PATH}
-cd ../..
-
-git clone https://github.com/softdevteam/yk/
-cd yk && cargo build
-YK_INST_DIR=`pwd`/target/debug/
+git clone --recurse-submodules --depth 1 https://github.com/softdevteam/yk
+cd yk
+YKB_YKLLVM_BUILD_ARGS="define:CMAKE_C_COMPILER=/usr/bin/clang,define:CMAKE_CXX_COMPILER=/usr/bin/clang++" \
+    cargo build
+echo $PATH=$(pwd)/bin:$PATH
 cd ..
 
-# The CFLAGS are those suggest for clang in
+export YK_BUILD_TYPE=debug
+# The CFLAGS are those suggested for clang in
 # https://devguide.python.org/setup/#clang.
-LDFLAGS="-L$YK_INST_DIR -Wl,-rpath=$YK_INST_DIR" CC=clang \
-  CPPFLAGS=-I`pwd`/yk/ykcapi \
-  CFLAGS="-Wno-unused-value -Wno-empty-body -Qunused-arguments" \
+# FIXME: `ax_cv_c_float_words_bigendian` shouldn't be hardcoded, but currently
+# the configure script doesn't work with out it!
+ax_cv_c_float_words_bigendian=no \
+  CC=$(yk-config $YK_BUILD_TYPE --cc) \
+  CFLAGS="$(yk-config $YK_BUILD_TYPE --cflags) -Wno-unused-value -Wno-empty-body -Qunused-arguments" \
+  CXX=$(yk-config $YK_BUILD_TYPE --cxx) \
+  CPPFLAGS=$(yk-config $YK_BUILD_TYPE --cppflags) \
+  LD=$(yk-config $YK_BUILD_TYPE --cc) \
+  LDFLAGS=$(yk-config $YK_BUILD_TYPE --ldflags) \
   ./configure
 
-LDFLAGS="-L$YK_INST_DIR -Wl,-rpath=$YK_INST_DIR" \
-  CC=clang \
-  CPPFLAGS=-I`pwd`/yk/ykcapi \
-  CFLAGS="-Wno-unused-value -Wno-empty-body -Qunused-arguments" \
-  LD_LIBRARY_PATH=`pwd`/yk/target/release \
-  make -j `nproc` test
+CC=$(yk-config $YK_BUILD_TYPE --cc) \
+  CFLAGS="$(yk-config $YK_BUILD_TYPE --cflags) -Wno-unused-value -Wno-empty-body -Qunused-arguments" \
+  CXX=$(yk-config $YK_BUILD_TYPE --cxx) \
+  CPPFLAGS=$(yk-config $YK_BUILD_TYPE --cppflags) \
+  make -j $(nproc) test
