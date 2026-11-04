@@ -160,6 +160,9 @@ def generate_tier1(
 #if !_Py_TAIL_CALL_INTERP
 #if !USE_COMPUTED_GOTOS
     dispatch_opcode:
+#ifdef USE_YK
+        YK_DISPATCH();
+#endif
         switch (dispatch_code)
 #endif
         {{

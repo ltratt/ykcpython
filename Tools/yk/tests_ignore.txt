@@ -1,0 +1,33 @@
+# This file contains tests which either (1) don't work with yk (2) don't work with yk's test environment.
+
+# 1: Tests that don't work with yk
+
+# yk doesn't include the debug information GDB tests need.
+test.test_gdb.test_pretty_print.*
+# yk starts multiple threads which interfere with some of the test's
+assumptions of "there is only one thread in the process".
+test.test_signal.*
+
+# These tests aren't compatible with yk's worker threads
+test.test_perf_profiler.TestPerfTrampoline.test_trampoline_works_with_forks
+test.test_perf_profiler.TestPerfTrampoline.test_trampoline_works_after_fork_with_many_code_objects
+test.test_threading.ThreadTests.test_main_thread_after_fork
+test.test_threading.ThreadTests.test_native_id_after_fork
+
+
+# 2: Tests that don't work with yk's test environment (YMMV)
+
+# These require /etc/services which isn't always available.
+test.test_asyncio.test_base_events.BaseEventLoopWithSelectorTests.test_create_connection_service_name
+test.test_socket.GeneralModuleTests.testGetServBy
+test.test_socket.GeneralModuleTests.testGetaddrinfo
+
+# The user/group mapping doesn't work with all containers.
+test.test_os.test_posix.PosixTester.test_chown
+test.test_os.test_posix.PosixTester.test_fchown
+test.test_os.test_posix.PosixTester.test_lchown
+
+# This seems to have a race condition in using sockets that other processes may
+# also grab hold of.
+
+test.test_asyncio.test_events.*.test_create_connection_local_addr_skip_different_family

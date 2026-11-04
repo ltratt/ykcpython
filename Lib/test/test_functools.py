@@ -2240,6 +2240,7 @@ class TestLRU:
     @support.skip_if_sanitizer("requires deep stack", ub=True, thread=True)
     @support.skip_if_unlimited_stack_size
     @support.skip_emscripten_stack_overflow()
+    @support.run_with_limited_c_stack()
     def test_lru_recursion(self):
 
         @self.module.lru_cache

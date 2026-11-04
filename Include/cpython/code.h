@@ -40,6 +40,13 @@ typedef struct {
 #define _PyCode_DEF_THREAD_LOCAL_BYTECODE()
 #endif
 
+#ifdef USE_YK
+struct YkLocation;
+#define _PyCode_DEF_YK() struct YkLocation *_co_yklocs;
+#else
+#define _PyCode_DEF_YK()
+#endif
+
 // To avoid repeating ourselves in deepfreeze.py, all PyCodeObject members are
 // defined in this macro:
 #define _PyCode_DEF(SIZE) {                                                    \
@@ -108,6 +115,7 @@ typedef struct {
        people to go through the proper APIs. */                                \
     void *co_extra;                                                            \
     _PyCode_DEF_THREAD_LOCAL_BYTECODE()                                        \
+    _PyCode_DEF_YK()                                                           \
     char co_code_adaptive[(SIZE)];                                             \
 }
 

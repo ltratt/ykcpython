@@ -2894,6 +2894,19 @@ def run_with_limited_c_stack(depth=150_000, size=C_STACK_SIZE):
                 # Setting the thread stack size is not supported.
                 return run_test()
 
+            using_yk = False
+            try:
+                import _testinternalcapi
+                set_shadowstack_size = getattr(
+                    _testinternalcapi, 'yk_set_default_shadowstack_size', None)
+                if set_shadowstack_size is not None:
+                    using_yk = True
+                    # yk doesn't optimise shadowstack usage (yet) so tends to require notably more space.
+                    set_shadowstack_size(2 * size)
+            except ImportError:
+                # Not running under yk
+                pass
+
             exceptions = []
             def run():
                 try:
@@ -2906,6 +2919,8 @@ def run_with_limited_c_stack(depth=150_000, size=C_STACK_SIZE):
                 thread.start()
             except RuntimeError:
                 # Threads are not supported.
+                if using_yk:
+                    raise
                 return run_test()
             finally:
                 threading.stack_size(old_size)

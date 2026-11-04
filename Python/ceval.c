@@ -2,6 +2,9 @@
 
 #include "ceval.h"
 #include "pycore_long.h"
+#ifdef USE_YK
+#include <yk.h>
+#endif
 
 #ifdef HAVE_PTHREAD_NP_H
 #  include <pthread_np.h>         // pthread_attr_get_np()
@@ -1248,6 +1251,9 @@ _PyEval_EvalFrameDefault(PyThreadState *tstate, _PyInterpreterFrame *frame, int 
 #endif
 #endif
     _PyEntryFrame entry;
+#ifdef USE_YK
+    YkMT *yk_mt = tstate->interp->yk_mt;
+#endif
 
     if (_Py_EnterRecursiveCallTstate(tstate, "")) {
         assert(frame->owner != FRAME_OWNED_BY_INTERPRETER);
