@@ -59,6 +59,26 @@
     #define USE_COMPUTED_GOTOS 0
 #endif
 
+#ifdef USE_YK
+#if USE_COMPUTED_GOTOS || _Py_TAIL_CALL_INTERP
+// A simple sanity check that ykcpython hasn't been configured in a way that yk dislikes.
+#error "Invalid configuration of ykcpython"
+#endif
+
+#define YK_DISPATCH() do { \
+    if (frame->owner != FRAME_OWNED_BY_INTERPRETER) { \
+      PyCodeObject *yk_code = _PyFrame_GetCode(frame); \
+      YkLocation *ykloc = &yk_code->_co_yklocs[next_instr - _PyCode_CODE(yk_code)]; \
+      yk_mt_control_point(yk_mt, ykloc); \
+      if (!yk_is_interpreting()) { \
+        yk_promote(dispatch_code); \
+        yk_promote(tracing_mode); \
+        yk_promote_code_id(yk_code->co_version); \
+      } \
+    } \
+} while (0)
+#endif
+
 #ifdef Py_STATS
 #define INSTRUCTION_STATS(op) \
     do { \

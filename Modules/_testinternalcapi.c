@@ -58,6 +58,10 @@
 #  include <wchar.h>
 #endif
 
+#ifdef USE_YK
+#  include <yk.h>
+#endif
+
 #define MODULE_NAME "_testinternalcapi"
 
 
@@ -3272,6 +3276,23 @@ static PyTypeObject SelfInterruptingContextManager_Type = {
 };
 
 
+#ifdef USE_YK
+static PyObject *
+set_yk_default_shadowstack_size(PyObject *self, PyObject *arg)
+{
+    size_t size = PyLong_AsSize_t(arg);
+    if (size == (size_t)-1 && PyErr_Occurred()) {
+        return NULL;
+    }
+    if (size == 0 || size > PTRDIFF_MAX) {
+        PyErr_SetString(PyExc_ValueError, "invalid yk shadow stack size");
+        return NULL;
+    }
+    yk_set_default_shadowstack_size(size);
+    Py_RETURN_NONE;
+}
+#endif
+
 static PyMethodDef module_functions[] = {
     {"get_configs", get_configs, METH_NOARGS},
     {"get_eval_frame_stats", get_eval_frame_stats, METH_NOARGS, NULL},
@@ -3400,6 +3421,9 @@ static PyMethodDef module_functions[] = {
     {"test_interp_guard_countdown", test_interp_guard_countdown, METH_NOARGS},
     {"test_interp_view_countdown", test_interp_view_countdown, METH_NOARGS},
     {"test_thread_state_ensure_from_view_interp_switch", test_thread_state_ensure_from_view_interp_switch, METH_NOARGS},
+#ifdef USE_YK
+    {"yk_set_default_shadowstack_size", set_yk_default_shadowstack_size, METH_O},
+#endif
     {NULL, NULL} /* sentinel */
 };
 

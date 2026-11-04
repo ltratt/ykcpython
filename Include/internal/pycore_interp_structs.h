@@ -1065,6 +1065,10 @@ struct _is {
     // guards can no longer be created.
     uintptr_t finalization_guards;
 
+#ifdef USE_YK
+    struct YkMT *yk_mt;
+#endif
+
     /* the initial PyInterpreterState.threads.head */
     _PyThreadStateImpl _initial_thread;
     // _initial_thread should be the last field of PyInterpreterState.

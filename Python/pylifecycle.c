@@ -1,6 +1,9 @@
 /* Python interpreter top-level routines, including init/exit */
 
 #include "Python.h"
+#ifdef USE_YK
+#include <yk.h>
+#endif
 #include "pycore_audit.h"         // _PySys_ClearAuditHooks()
 #include "pycore_call.h"          // _PyObject_CallMethod()
 #include "pycore_ceval.h"         // _PyEval_FiniGIL()
@@ -946,6 +949,12 @@ pycore_interp_init(PyThreadState *tstate)
     PyInterpreterState *interp = tstate->interp;
     PyStatus status;
     PyObject *sysmod = NULL;
+
+#ifdef USE_YK
+    // This is safe with repeated interpreter invocation because `yk_mt_new`
+    // returns a pointer to a single MT instance per process.
+    interp->yk_mt = yk_mt_new(NULL);
+#endif
 
     // Create singletons before the first PyType_Ready() call, since
     // PyType_Ready() uses singletons like the Unicode empty string (tp_doc)
@@ -2146,6 +2155,14 @@ finalize_interp_clear(PyThreadState *tstate)
 static void
 finalize_interp_delete(PyInterpreterState *interp)
 {
+#ifdef USE_YK
+    // We only want to actually shut yk down if this is the main interpreter
+    // (if we shutdown subinterpreters, performance in other interpreters would
+    // tank).
+    if (_Py_IsMainInterpreter(interp) && interp->yk_mt != NULL) {
+        yk_mt_shutdown(interp->yk_mt);
+    }
+#endif
     /* Cleanup auto-thread-state */
     _PyGILState_Fini(interp);
 
