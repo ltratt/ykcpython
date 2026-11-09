@@ -22,6 +22,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifdef USE_YK
+#include <stdatomic.h>
+#endif
+
 #define NEED_OPCODE_METADATA
 #include "pycore_uop_metadata.h" // Uop tables
 #undef NEED_OPCODE_METADATA
@@ -254,6 +258,16 @@ static int executor_clear(PyObject *executor);
 void
 _PyExecutor_Free(_PyExecutorObject *self)
 {
+#ifdef USE_YK
+    if (self->yk_locs != NULL) {
+        assert(self->yk_code_id > 0);
+        yk_retire_code_id(_PyInterpreterState_GET()->yk_mt, self->yk_code_id);
+        for (uint32_t i = 0; i < self->code_size; i++) {
+            yk_location_drop(self->yk_locs[i]);
+        }
+        PyMem_Free(self->yk_locs);
+    }
+#endif
 #ifdef _Py_JIT
     _PyJIT_Free(self);
 #endif
@@ -1463,6 +1477,10 @@ allocate_executor(int exit_count, int length)
     res->code_size = length;
     res->exit_count = exit_count;
     res->jit_registration = NULL;
+#ifdef USE_YK
+    res->yk_locs = NULL;
+    res->yk_code_id = 0;
+#endif
     return res;
 }
 
@@ -1818,6 +1836,32 @@ unlink_executor(_PyExecutorObject *executor)
 int
 _Py_ExecutorInit(_PyExecutorObject *executor, const _PyBloomFilter *dependency_set)
 {
+#ifdef USE_YK
+    // code ID 0 is used in `allocate_executor` so "real" code IDs need to start at 1.
+    static _Atomic uint64_t next_yk_code_id = 1;
+
+    executor->yk_locs = PyMem_Calloc(executor->code_size, sizeof(YkLocation));
+    if (executor->yk_locs == NULL) {
+        PyErr_NoMemory();
+        return -1;
+    }
+    /* An executor may loop internally without returning to its entry. */
+    for (uint32_t i = 0; i < executor->code_size; i++) {
+        executor->yk_locs[i] = yk_location_null();
+    }
+    for (uint32_t i = 0; i < executor->code_size; i++) {
+        const _PyUOpInstruction *uop = &executor->trace[i];
+
+        if (_PyUop_Uncached[uop->opcode] == _JUMP_TO_TOP) {
+            uint16_t target = uop_get_jump_target(uop);
+            if (yk_location_is_null(executor->yk_locs[target])) {
+                executor->yk_locs[target] = yk_location_new();
+            }
+        }
+    }
+    executor->yk_code_id =
+      atomic_fetch_add_explicit(&next_yk_code_id, 1, memory_order_relaxed);
+#endif
     executor->vm_data.valid = true;
     executor->vm_data.pending_deletion = 0;
     executor->vm_data.code = NULL;

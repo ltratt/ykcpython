@@ -10,7 +10,7 @@ if [ ! -f Makefile ]; then
     RANLIB="$(yk-config release --ranlib)" \
     CPPFLAGS="$(yk-config release --cppflags) -DUSE_YK" \
     ../configure --without-computed-gotos --without-tail-call-interp \
-        --enable-experimental-jit=no --without-ensurepip
+        --enable-experimental-jit=interpreter --without-ensurepip
 fi
 exec make -j "$(nproc)" all \
     OPT="-DNDEBUG -O2 -Wall" \
