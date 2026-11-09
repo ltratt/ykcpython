@@ -1373,6 +1373,15 @@ _PyJitEntryFuncPtr _Py_jit_entry = _PyTier2Interpreter;
 
 #if defined(_Py_TIER2) && !defined(_Py_JIT)
 
+#ifdef USE_YK
+__attribute__((yk_idempotent))
+uint16_t idempotent_load_opcode(uint64_t code_id, const _PyUOpInstruction *pc)
+{
+    __asm__ volatile("" : "+r"(code_id));
+    return pc->opcode;
+}
+#endif
+
 _Py_CODEUNIT *
 _PyTier2Interpreter(
     _PyExecutorObject *current_executor, _PyInterpreterFrame *frame,
@@ -1394,6 +1403,11 @@ _PyTier2Interpreter(
 tier2_start:
 
     next_uop = current_executor->trace;
+#ifdef USE_YK
+    YkLocation *yk_locs = current_executor->yk_locs;
+    const _PyUOpInstruction *yk_trace = current_executor->trace;
+    uint64_t yk_code_id = current_executor->yk_code_id;
+#endif
     assert(next_uop->opcode == _START_EXECUTOR_r00 + current_cached_values ||
         next_uop->opcode == _COLD_EXIT_r00 + current_cached_values ||
         next_uop->opcode == _COLD_DYNAMIC_EXIT_r00 + current_cached_values);
@@ -1423,19 +1437,29 @@ tier2_start:
         next_uop->opcode == _COLD_DYNAMIC_EXIT_r00);
 tier2_dispatch:
     for (;;) {
-        uopcode = next_uop->opcode;
 #ifdef USE_YK
-        if (current_executor->yk_locs != NULL) {
-            ptrdiff_t uop_idx = next_uop - current_executor->trace;
+        if (yk_locs != NULL) {
+            ptrdiff_t uop_idx = next_uop - yk_trace;
             assert(uop_idx >= 0 && uop_idx < current_executor->code_size);
-            yk_mt_control_point(yk_mt, &current_executor->yk_locs[uop_idx]);
+            yk_mt_control_point(yk_mt, &yk_locs[uop_idx]);
             if (!yk_is_interpreting()) {
                 yk_promote(current_executor);
                 yk_promote(next_uop);
-                yk_promote(uopcode);
-                yk_promote_code_id(current_executor->yk_code_id);
+                yk_promote_code_id(yk_code_id);
+                uopcode = idempotent_load_opcode(yk_code_id, next_uop);
+            }
+            else {
+                uopcode = next_uop->opcode;
             }
         }
+        else {
+            uopcode = next_uop->opcode;
+            if (!yk_is_interpreting()) {
+                uopcode = yk_promote(uopcode);
+            }
+        }
+#else
+        uopcode = next_uop->opcode;
 #endif
 #ifdef Py_DEBUG
         if (frame->lltrace >= 4) {
