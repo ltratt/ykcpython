@@ -1849,6 +1849,7 @@ _Py_ExecutorInit(_PyExecutorObject *executor, const _PyBloomFilter *dependency_s
     for (uint32_t i = 0; i < executor->code_size; i++) {
         executor->yk_locs[i] = yk_location_null();
     }
+    executor->yk_locs[0] = yk_location_new();
     for (uint32_t i = 0; i < executor->code_size; i++) {
         const _PyUOpInstruction *uop = &executor->trace[i];
 
