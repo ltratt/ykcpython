@@ -15,6 +15,9 @@ extern "C" {
 #include "pycore_stackref.h"      // _PyStackRef
 #include "pycore_optimizer_types.h"
 #include <stdbool.h>
+#ifdef USE_YK
+#include <yk.h>
+#endif
 
 /* Fitness controls how long a trace can grow.
  * Starts at FITNESS_INITIAL, then decreases from per-bytecode buffer usage
@@ -199,6 +202,10 @@ typedef struct _PyExecutorObject {
     size_t jit_size;
     void *jit_code;
     _PyJitCodeRegistration *jit_registration;
+#ifdef USE_YK
+    YkLocation *yk_locs;
+    uint64_t yk_code_id; // Must be castable to `uintptr_t`.
+#endif
     _PyExitData exits[1];
 } _PyExecutorObject;
 

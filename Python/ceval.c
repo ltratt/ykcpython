@@ -2,9 +2,21 @@
 
 #include "ceval.h"
 #include "pycore_long.h"
+#ifdef USE_YK
+#include <yk.h>
+#endif
 
 #ifdef HAVE_PTHREAD_NP_H
 #  include <pthread_np.h>         // pthread_attr_get_np()
+#endif
+
+#ifdef USE_YK
+#if !defined(_Py_TIER2) || defined(_Py_JIT) || defined(Py_GIL_DISABLED)
+// A simple sanity check that ykcpython hasn't been configured in a way that yk
+// dislikes. There isn't an obvious place to put this, so here is as good as
+// any.
+#error "Invalid configuration of ykcpython"
+#endif
 #endif
 
 
@@ -1367,6 +1379,9 @@ _PyTier2Interpreter(
     _PyStackRef *stack_pointer, PyThreadState *tstate
 ) {
     const _PyUOpInstruction *next_uop;
+#ifdef USE_YK
+    YkMT *yk_mt = tstate->interp->yk_mt;
+#endif
     int oparg;
     /* Set up "jit" state after entry from tier 1.
      * This mimics what the jit shim function does. */
@@ -1409,6 +1424,19 @@ tier2_start:
 tier2_dispatch:
     for (;;) {
         uopcode = next_uop->opcode;
+#ifdef USE_YK
+        if (current_executor->yk_locs != NULL) {
+            ptrdiff_t uop_idx = next_uop - current_executor->trace;
+            assert(uop_idx >= 0 && uop_idx < current_executor->code_size);
+            yk_mt_control_point(yk_mt, &current_executor->yk_locs[uop_idx]);
+            if (!yk_is_interpreting()) {
+                yk_promote(current_executor);
+                yk_promote(next_uop);
+                yk_promote(uopcode);
+                yk_promote_code_id(current_executor->yk_code_id);
+            }
+        }
+#endif
 #ifdef Py_DEBUG
         if (frame->lltrace >= 4) {
             dump_stack(frame, stack_pointer);
