@@ -1353,6 +1353,7 @@ int _PyRunRemoteDebugger(PyThreadState *tstate)
 * while avoiding code that might trigger the eval breaker
 * until so desired.
 */
+__attribute__((yk_outline))
 int
 _Py_HandlePending(PyThreadState *tstate)
 {
