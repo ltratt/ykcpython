@@ -24,9 +24,6 @@
 #include "pycore_unicodeobject.h" // _PyUnicodeASCIIIter_Type
 
 #include <stdlib.h> // rand()
-#ifdef USE_YK
-#include <yk.h>
-#endif
 
 /* For guidance on adding or extending families of instructions see
  * InternalDocs/interpreter.md `Specialization` section.
@@ -3085,14 +3082,6 @@ static _PyCodeArray init_cleanup_tlbc = {
 };
 #endif
 
-#ifdef USE_YK
-// YKFIXME: This is a hack: `PyInitCleanup` hardcodes 4 bytecodes in a `const`.
-// We happen to know that yk currently uses `0` as the "null YkLocation": this
-// is not defined behaviour (at least not at the time of writing), but it's a
-// pragmatic compromise to get us going.
-static YkLocation init_cleanup_yklocs[4];
-#endif
-
 const struct _PyCode8 _Py_InitCleanup = {
     _PyVarObject_HEAD_INIT(&PyCode_Type, 3),
     .co_consts = (PyObject *)&_Py_SINGLETON(tuple_empty),
@@ -3116,8 +3105,5 @@ const struct _PyCode8 _Py_InitCleanup = {
         RETURN_VALUE, 0,
         RESUME, RESUME_AT_FUNC_START,
         CACHE, 0, /* RESUME's cache */
-    },
-#ifdef USE_YK
-    ._co_yklocs = init_cleanup_yklocs
-#endif
+    }
 };

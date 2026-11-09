@@ -21,9 +21,6 @@
 
 #include "clinic/codeobject.c.h"
 #include <stdbool.h>
-#ifdef USE_YK
-#include <yk.h>
-#endif
 
 
 #define INITIAL_SPECIALIZED_CODE_SIZE 16
@@ -564,9 +561,6 @@ init_code(PyCodeObject *co, struct _PyCodeConstructor *con)
     /* not set */
     co->co_weakreflist = NULL;
     co->co_extra = NULL;
-#ifdef USE_YK
-    co->_co_yklocs = NULL;
-#endif
     co->_co_cached = NULL;
     co->co_executors = NULL;
 
@@ -590,25 +584,6 @@ init_code(PyCodeObject *co, struct _PyCodeConstructor *con)
     }
     co->_co_firsttraceable = entry_point;
 
-#ifdef USE_YK
-    YkLocation *yklocs = PyMem_Calloc(Py_SIZE(co), sizeof(YkLocation));
-    if (yklocs == NULL) {
-        PyErr_NoMemory();
-        return -1;
-    }
-    for (Py_ssize_t i = 0; i < Py_SIZE(co); i++) {
-        yklocs[i] = yk_location_null();
-    }
-    /* Walk instructions before quickening, skipping their inline caches. */
-    for (Py_ssize_t i = 0; i < Py_SIZE(co);) {
-        int opcode = _PyCode_CODE(co)[i].op.code;
-        if (opcode == JUMP_BACKWARD || opcode == JUMP_BACKWARD_NO_JIT) {
-            yklocs[i] = yk_location_new();
-        }
-        i += 1 + _PyOpcode_Caches[opcode];
-    }
-    co->_co_yklocs = yklocs;
-#endif
 #ifdef Py_GIL_DISABLED
     int enable_counters = interp->config.tlbc_enabled && interp->opt_config.specialization_enabled;
     _PyCode_Quicken(_PyCode_CODE(co), Py_SIZE(co), enable_counters, co->co_flags);
@@ -2489,16 +2464,6 @@ code_dealloc(PyObject *self)
         }
         PyMem_Free(co->co_tlbc);
     }
-#endif
-#ifdef USE_YK
-    if (co->_co_yklocs != NULL) {
-        for (Py_ssize_t i = 0; i < Py_SIZE(co); i++) {
-            yk_location_drop(co->_co_yklocs[i]);
-        }
-        PyMem_Free(co->_co_yklocs);
-    }
-    YkMT *mt = tstate->interp->yk_mt;
-    yk_retire_code_id(mt, co->co_version);
 #endif
     PyObject_Free(co);
 }
