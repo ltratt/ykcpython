@@ -1976,6 +1976,7 @@ _Py_ScheduleGC(PyThreadState *tstate)
     }
 }
 
+__attribute__((yk_outline))
 void
 _PyObject_GC_Link(PyObject *op)
 {
