@@ -403,6 +403,9 @@ _PyLong_Negate(PyLongObject **x_p)
 
 /* Create a new int object from a C long int */
 
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 PyObject *
 PyLong_FromLong(long ival)
 {
@@ -1570,6 +1573,9 @@ PyLong_FromLongLong(long long ival)
 
 /* Create a new int object from a C Py_ssize_t. */
 
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 PyObject *
 PyLong_FromSsize_t(Py_ssize_t ival)
 {
