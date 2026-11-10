@@ -1074,6 +1074,9 @@ extern void _PyUOpPrint(const _PyUOpInstruction *uop);
 #endif
 
 
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 PyObject **
 _PyObjectArray_FromStackRefArray(_PyStackRef *input, Py_ssize_t nargs, PyObject **scratch)
 {
@@ -2083,6 +2086,9 @@ _PyEval_FrameClearAndPop(PyThreadState *tstate, _PyInterpreterFrame * frame)
 }
 
 /* Consumes references to func, locals and all the args */
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 _PyInterpreterFrame *
 _PyEvalFramePushAndInit(PyThreadState *tstate, _PyStackRef func,
                         PyObject *locals, _PyStackRef const* args,
@@ -2189,6 +2195,9 @@ error:
     return NULL;
 }
 
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 PyObject *
 _PyEval_Vector(PyThreadState *tstate, PyFunctionObject *func,
                PyObject *locals,
