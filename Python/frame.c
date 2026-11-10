@@ -89,6 +89,9 @@ take_ownership(PyFrameObject *f, _PyInterpreterFrame *frame)
     Py_END_CRITICAL_SECTION();
 }
 
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 void
 _PyFrame_ClearLocals(_PyInterpreterFrame *frame)
 {

@@ -183,6 +183,9 @@ _PyFrame_InitializeTLBC(PyThreadState *tstate, _PyInterpreterFrame *frame,
    Does not initialize frame->previous, which happens
    when frame is linked into the frame stack.
  */
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 static inline void
 _PyFrame_Initialize(
     PyThreadState *tstate, _PyInterpreterFrame *frame, _PyStackRef func,
