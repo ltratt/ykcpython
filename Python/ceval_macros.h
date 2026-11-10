@@ -499,6 +499,19 @@ do {                                                   \
         return (_Py_CODEUNIT *)(((uintptr_t)(TARGET))| 1); \
     } while (0)
 
+#ifdef USE_YK
+#define CURRENT_UOP_FIELD(FIELD) \
+    (yk_is_interpreting() ? next_uop[-1].FIELD : \
+     idempotent_load_##FIELD(yk_code_id, &next_uop[-1]))
+#define CURRENT_OPARG() CURRENT_UOP_FIELD(oparg)
+#define CURRENT_OPERAND0_64() CURRENT_UOP_FIELD(operand0)
+#define CURRENT_OPERAND1_64() CURRENT_UOP_FIELD(operand1)
+#define CURRENT_OPERAND0_32() CURRENT_UOP_FIELD(operand0)
+#define CURRENT_OPERAND1_32() CURRENT_UOP_FIELD(operand1)
+#define CURRENT_OPERAND0_16() CURRENT_UOP_FIELD(operand0)
+#define CURRENT_OPERAND1_16() CURRENT_UOP_FIELD(operand1)
+#define CURRENT_TARGET() CURRENT_UOP_FIELD(target)
+#else
 #define CURRENT_OPARG()    (next_uop[-1].oparg)
 #define CURRENT_OPERAND0_64() (next_uop[-1].operand0)
 #define CURRENT_OPERAND1_64() (next_uop[-1].operand1)
@@ -507,6 +520,7 @@ do {                                                   \
 #define CURRENT_OPERAND0_16() (next_uop[-1].operand0)
 #define CURRENT_OPERAND1_16() (next_uop[-1].operand1)
 #define CURRENT_TARGET()   (next_uop[-1].target)
+#endif
 
 #define JUMP_TO_JUMP_TARGET() goto jump_to_jump_target
 #define JUMP_TO_ERROR() goto jump_to_error_target

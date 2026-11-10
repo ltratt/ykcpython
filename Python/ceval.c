@@ -1374,12 +1374,21 @@ _PyJitEntryFuncPtr _Py_jit_entry = _PyTier2Interpreter;
 #if defined(_Py_TIER2) && !defined(_Py_JIT)
 
 #ifdef USE_YK
-__attribute__((yk_idempotent))
-uint16_t idempotent_load_opcode(uint64_t code_id, const _PyUOpInstruction *pc)
-{
-    __asm__ volatile("" : "+r"(code_id));
-    return pc->opcode;
-}
+#define DEF_IDEMPOTENT_LOAD_FIELD(TYPE, FIELD) \
+    __attribute__((yk_idempotent)) \
+    static TYPE idempotent_load_##FIELD(uint64_t code_id, const _PyUOpInstruction *pc) \
+    { \
+        __asm__ volatile("" : "+r"(code_id)); \
+        return pc->FIELD; \
+    }
+
+DEF_IDEMPOTENT_LOAD_FIELD(uint16_t, opcode)
+DEF_IDEMPOTENT_LOAD_FIELD(uint16_t, oparg)
+DEF_IDEMPOTENT_LOAD_FIELD(uint32_t, target)
+DEF_IDEMPOTENT_LOAD_FIELD(uint16_t, jump_target)
+DEF_IDEMPOTENT_LOAD_FIELD(uint16_t, error_target)
+DEF_IDEMPOTENT_LOAD_FIELD(uint64_t, operand0)
+DEF_IDEMPOTENT_LOAD_FIELD(uint64_t, operand1)
 #endif
 
 _Py_CODEUNIT *
@@ -1522,13 +1531,21 @@ jump_to_error_target:
     }
 #endif
     assert(next_uop[-1].format == UOP_FORMAT_JUMP);
+#ifdef USE_YK
+    uint16_t target = CURRENT_UOP_FIELD(error_target);
+#else
     uint16_t target = uop_get_error_target(&next_uop[-1]);
+#endif
     next_uop = current_executor->trace + target;
     goto tier2_dispatch;
 
 jump_to_jump_target:
     assert(next_uop[-1].format == UOP_FORMAT_JUMP);
+#ifdef USE_YK
+    target = CURRENT_UOP_FIELD(jump_target);
+#else
     target = uop_get_jump_target(&next_uop[-1]);
+#endif
     next_uop = current_executor->trace + target;
     goto tier2_dispatch;
 
