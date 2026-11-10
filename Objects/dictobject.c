@@ -7256,6 +7256,9 @@ _PyDict_NewKeysForClass(PyHeapTypeObject *cls)
     return keys;
 }
 
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 void
 _PyObject_InitInlineValues(PyObject *obj, PyTypeObject *tp)
 {
