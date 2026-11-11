@@ -6418,6 +6418,9 @@ dictview_traverse(PyObject *self, visitproc visit, void *arg)
     return 0;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static Py_ssize_t
 dictview_len(PyObject *self)
 {

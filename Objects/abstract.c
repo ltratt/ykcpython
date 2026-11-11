@@ -16,6 +16,9 @@
 #include "pycore_unionobject.h"   // _PyUnion_Check()
 
 #include <stddef.h>               // offsetof()
+#ifdef USE_YK
+#include <yk.h>
+#endif
 
 
 /* Shorthands to return certain errors */
@@ -53,6 +56,16 @@ PyObject_Type(PyObject *o)
     return Py_NewRef(v);
 }
 
+#ifdef USE_YK
+// `PyObjectSize` is reachable from a `yk_outlined`d function, so we have to
+// pull the promote out.
+__attribute__((noinline))
+static void promote_length(lenfunc sq_length)
+{
+    yk_promote(sq_length);
+}
+#endif
+
 Py_ssize_t
 PyObject_Size(PyObject *o)
 {
@@ -63,7 +76,14 @@ PyObject_Size(PyObject *o)
 
     PySequenceMethods *m = Py_TYPE(o)->tp_as_sequence;
     if (m && m->sq_length) {
+#ifdef USE_YK
+        lenfunc sq_length = m->sq_length;
+        if (!yk_is_interpreting())
+            promote_length(sq_length);
+        Py_ssize_t len = sq_length(o);
+#else
         Py_ssize_t len = m->sq_length(o);
+#endif
         assert(_Py_CheckSlotResult(o, "__len__", len >= 0));
         return len;
     }
