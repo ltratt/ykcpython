@@ -592,6 +592,9 @@ unroll_digits_size_t(PyLongObject *v, Py_ssize_t *iptr)
    For other errors (e.g., TypeError), return -1 and set an error condition.
    In this case *overflow will be 0.
 */
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 long
 PyLong_AsLongAndOverflow(PyObject *vv, int *overflow)
 {
