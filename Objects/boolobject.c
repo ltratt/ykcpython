@@ -41,6 +41,9 @@ bool_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     return PyBool_FromLong(ok);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 bool_vectorcall(PyObject *type, PyObject * const*args,
                 size_t nargsf, PyObject *kwnames)

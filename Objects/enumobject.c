@@ -100,6 +100,9 @@ static int check_keyword(PyObject *kwnames, int index,
 }
 
 // TODO: Use AC when bpo-43447 is supported
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 enumerate_vectorcall(PyObject *type, PyObject *const *args,
                      size_t nargsf, PyObject *kwnames)

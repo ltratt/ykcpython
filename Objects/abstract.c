@@ -2829,6 +2829,16 @@ _PyObject_RealIsSubclass(PyObject *derived, PyObject *cls)
 }
 
 
+#ifdef USE_YK
+// `PyObject_GetIter` is reachable from a `yk_outlined`d function, so we have
+// to pull the promote out.
+__attribute__((noinline))
+static void promote_getiter(getiterfunc f)
+{
+    yk_promote(f);
+}
+#endif
+
 PyObject *
 PyObject_GetIter(PyObject *o)
 {
@@ -2842,6 +2852,10 @@ PyObject_GetIter(PyObject *o)
         return type_error("'%.200s' object is not iterable", o);
     }
     else {
+#ifdef USE_YK
+        if (!yk_is_interpreting())
+            promote_getiter(f);
+#endif
         PyObject *res = (*f)(o);
         if (res != NULL && !PyIter_Check(res)) {
             PyErr_Format(PyExc_TypeError,

@@ -1609,6 +1609,9 @@ float_subtype_new(PyTypeObject *type, PyObject *x)
     return newobj;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 float_vectorcall(PyObject *type, PyObject *const *args,
                  size_t nargsf, PyObject *kwnames)

@@ -920,6 +920,17 @@ _PyCallMethodDescriptorFastWithKeywords_StackRef(
     return res;
 }
 
+#ifdef USE_YK
+// _Py_CallBuiltinClass_StackRef gets inlined in more than one place and one of
+// them is `yk_outline`d causing it to bork on the `yk_promote`. Pulling it out
+// into a separate function is a hack to work around this.
+__attribute__((noinline))
+static void promote_vectorcall(vectorcallfunc vectorcall)
+{
+    yk_promote(vectorcall);
+}
+#endif
+
 PyObject *
 _Py_CallBuiltinClass_StackRef(
     _PyStackRef callable,
@@ -932,7 +943,14 @@ _Py_CallBuiltinClass_StackRef(
         return NULL;
     }
     PyTypeObject *tp = (PyTypeObject *)PyStackRef_AsPyObjectBorrow(callable);
+#ifdef USE_YK
+    vectorcallfunc vectorcall = tp->tp_vectorcall;
+    if (!yk_is_interpreting())
+        promote_vectorcall(vectorcall);
+    res = vectorcall((PyObject *)tp, args_o, total_args | PY_VECTORCALL_ARGUMENTS_OFFSET, NULL);
+#else
     res = tp->tp_vectorcall((PyObject *)tp, args_o, total_args | PY_VECTORCALL_ARGUMENTS_OFFSET, NULL);
+#endif
     STACKREFS_TO_PYOBJECTS_CLEANUP(args_o);
     assert((res != NULL) ^ (PyErr_Occurred() != NULL));
     return res;
