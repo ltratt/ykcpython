@@ -322,6 +322,9 @@ compute_range_length(PyObject *start, PyObject *stop, PyObject *step)
     return NULL;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static Py_ssize_t
 range_length(PyObject *op)
 {

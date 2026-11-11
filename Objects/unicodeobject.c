@@ -12271,6 +12271,9 @@ unicode_join(PyObject *self, PyObject *iterable)
     return PyUnicode_Join(self, iterable);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static Py_ssize_t
 unicode_length(PyObject *self)
 {

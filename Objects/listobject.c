@@ -667,6 +667,9 @@ list_repr(PyObject *self)
     return ret;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static Py_ssize_t
 list_length(PyObject *a)
 {

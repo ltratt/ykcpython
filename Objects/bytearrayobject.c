@@ -391,6 +391,9 @@ PyByteArray_Concat(PyObject *a, PyObject *b)
 
 /* Functions stuffed into the type object */
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static Py_ssize_t
 bytearray_length(PyObject *op)
 {
