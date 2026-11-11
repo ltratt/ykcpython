@@ -461,6 +461,9 @@ PyTuple_FromArray(PyObject *const *src, Py_ssize_t n)
     return (PyObject *)tuple;
 }
 
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 PyObject *
 _PyTuple_FromStackRefStealOnSuccess(const _PyStackRef *src, Py_ssize_t n)
 {
