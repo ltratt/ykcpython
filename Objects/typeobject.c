@@ -2940,6 +2940,9 @@ type_is_subtype_base_chain(PyTypeObject *a, PyTypeObject *b)
     return (b == &PyBaseObject_Type);
 }
 
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 static int
 is_subtype_with_mro(PyObject *a_mro, PyTypeObject *a, PyTypeObject *b)
 {
@@ -12689,6 +12692,9 @@ super_repr(PyObject *self)
 on the super object itself.
 
 May return NULL with or without an exception set, like PyDict_GetItemWithError. */
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 PyObject *
 _PySuper_LookupDescr(PyTypeObject *su_type, PyTypeObject *su_obj_type, PyObject *name)
 {
