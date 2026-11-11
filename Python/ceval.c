@@ -1808,6 +1808,9 @@ fail:
 
 }
 
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 static int
 initialize_locals(PyThreadState *tstate, PyFunctionObject *func,
     _PyStackRef *localsplus, _PyStackRef const *args,
