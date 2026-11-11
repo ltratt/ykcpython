@@ -14783,6 +14783,9 @@ PyTypeObject _PyUnicodeASCIIIter_Type = {
     .tp_methods = unicodeiter_methods,
 };
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 unicode_iter(PyObject *seq)
 {

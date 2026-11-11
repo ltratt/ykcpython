@@ -1622,6 +1622,9 @@ _PyObject_GetDictPtr(PyObject *obj)
     return (PyObject **)&_PyObject_ManagedDictPointer(obj)->dict;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 PyObject_SelfIter(PyObject *obj)
 {

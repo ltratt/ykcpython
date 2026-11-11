@@ -5433,6 +5433,9 @@ frozendict_vectorcall(PyObject *type, PyObject * const*args,
     return self;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 dict_iter(PyObject *self)
 {
@@ -6589,6 +6592,9 @@ Done:
 
 /*** dict_keys ***/
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 dictkeys_iter(PyObject *self)
 {
@@ -7026,6 +7032,9 @@ dictkeys_reversed(PyObject *self, PyObject *Py_UNUSED(ignored))
 
 /*** dict_items ***/
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 dictitems_iter(PyObject *self)
 {
@@ -7138,6 +7147,9 @@ dictitems_reversed(PyObject *self, PyObject *Py_UNUSED(ignored))
 
 /*** dict_values ***/
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 dictvalues_iter(PyObject *self)
 {

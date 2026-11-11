@@ -3567,6 +3567,9 @@ list___init___impl(PyListObject *self, PyObject *iterable)
     return 0;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 list_vectorcall(PyObject *type, PyObject * const*args,
                 size_t nargsf, PyObject *kwnames)
@@ -4049,6 +4052,9 @@ PyTypeObject PyListIter_Type = {
 };
 
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 list_iter(PyObject *seq)
 {

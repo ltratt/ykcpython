@@ -3626,6 +3626,9 @@ PyTypeObject PyBytesIter_Type = {
     0,
 };
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 bytes_iter(PyObject *seq)
 {

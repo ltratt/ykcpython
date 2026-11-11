@@ -812,6 +812,9 @@ tuple_new_impl(PyTypeObject *type, PyObject *iterable)
     }
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 tuple_vectorcall(PyObject *type, PyObject * const*args,
                  size_t nargsf, PyObject *kwnames)
@@ -1266,6 +1269,9 @@ PyTypeObject PyTupleIter_Type = {
     0,
 };
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 tuple_iter(PyObject *seq)
 {

@@ -160,6 +160,9 @@ range_new(PyTypeObject *type, PyObject *args, PyObject *kw)
 }
 
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 range_vectorcall(PyObject *rangetype, PyObject *const *args,
                  size_t nargsf, PyObject *kwnames)
@@ -1226,6 +1229,9 @@ PyTypeObject PyLongRangeIter_Type = {
         0,
 };
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 range_iter(PyObject *seq)
 {
