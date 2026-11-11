@@ -3312,6 +3312,9 @@ _PyList_AsTupleAndClear(PyListObject *self)
     return ret;
 }
 
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 PyObject *
 _PyList_FromStackRefStealOnSuccess(const _PyStackRef *src, Py_ssize_t n)
 {
