@@ -5357,6 +5357,9 @@ dict_init(PyObject *self, PyObject *args, PyObject *kwds)
     return dict_update_common(self, args, kwds, "dict");
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline, yk_unroll))
+#endif
 static PyObject *
 dict_vectorcall(PyObject *type, PyObject * const*args,
                 size_t nargsf, PyObject *kwnames)
@@ -5389,6 +5392,9 @@ dict_vectorcall(PyObject *type, PyObject * const*args,
     return self;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline, yk_unroll))
+#endif
 static PyObject *
 frozendict_vectorcall(PyObject *type, PyObject * const*args,
                       size_t nargsf, PyObject *kwnames)

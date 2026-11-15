@@ -1469,6 +1469,9 @@ frozenset_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     return make_new_frozenset(type, iterable);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 frozenset_vectorcall(PyObject *type, PyObject * const*args,
                      size_t nargsf, PyObject *kwnames)
@@ -2784,6 +2787,9 @@ set_init(PyObject *so, PyObject *args, PyObject *kwds)
     return set_update_internal(self, iterable);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject*
 set_vectorcall(PyObject *type, PyObject * const*args,
                size_t nargsf, PyObject *kwnames)

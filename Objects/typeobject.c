@@ -5172,6 +5172,9 @@ type_new(PyTypeObject *metatype, PyObject *args, PyObject *kwds)
 }
 
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 type_vectorcall(PyObject *metatype, PyObject *const *args,
                  size_t nargsf, PyObject *kwnames)
@@ -13092,6 +13095,9 @@ super_traverse(PyObject *self, visitproc visit, void *arg)
     return 0;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 super_vectorcall(PyObject *self, PyObject *const *args,
     size_t nargsf, PyObject *kwnames)

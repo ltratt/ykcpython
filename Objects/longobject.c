@@ -6536,6 +6536,9 @@ int_is_integer_impl(PyObject *self)
     Py_RETURN_TRUE;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 long_vectorcall(PyObject *type, PyObject * const*args,
                  size_t nargsf, PyObject *kwnames)

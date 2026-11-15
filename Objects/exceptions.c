@@ -88,6 +88,9 @@ BaseException_init(PyObject *op, PyObject *args, PyObject *kwds)
 }
 
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 BaseException_vectorcall(PyObject *type_obj, PyObject * const*args,
                          size_t nargsf, PyObject *kwnames)
