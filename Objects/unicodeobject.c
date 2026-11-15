@@ -13927,6 +13927,9 @@ arg_as_utf8(PyObject *obj, const char *name)
     return _PyUnicode_AsUTF8NoNUL(obj);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 unicode_vectorcall(PyObject *type, PyObject *const *args,
                    size_t nargsf, PyObject *kwnames)

@@ -409,6 +409,9 @@ reversed_new_impl(PyTypeObject *type, PyObject *seq)
     return (PyObject *)ro;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 reversed_vectorcall(PyObject *type, PyObject * const*args,
                 size_t nargsf, PyObject *kwnames)
