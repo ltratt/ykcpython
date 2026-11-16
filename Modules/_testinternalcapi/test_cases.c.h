@@ -61,9 +61,19 @@
                 PyObject *lhs_o = PyStackRef_AsPyObjectBorrow(lhs);
                 PyObject *rhs_o = PyStackRef_AsPyObjectBorrow(rhs);
                 assert(_PyEval_BinaryOps[oparg]);
+                #if defined(USE_YK) && TIER_TWO
+                binaryfunc binary_func = _PyEval_BinaryOps[oparg];
+                if (!yk_is_interpreting()) {
+                    yk_promote(binary_func);
+                }
+                _PyFrame_SetStackPointer(frame, stack_pointer);
+                PyObject *res_o = binary_func(lhs_o, rhs_o);
+                stack_pointer = _PyFrame_GetStackPointer(frame);
+                #else
                 _PyFrame_SetStackPointer(frame, stack_pointer);
                 PyObject *res_o = _PyEval_BinaryOps[oparg](lhs_o, rhs_o);
                 stack_pointer = _PyFrame_GetStackPointer(frame);
+                #endif
                 if (res_o == NULL) {
                     JUMP_TO_LABEL(error);
                 }
