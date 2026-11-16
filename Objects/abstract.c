@@ -171,6 +171,9 @@ PyObject_LengthHint(PyObject *o, Py_ssize_t defaultvalue)
     return res;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 PyObject_GetItem(PyObject *o, PyObject *key)
 {
@@ -1146,14 +1149,41 @@ ternary_op(PyObject *v,
         return binary_op(v, w, NB_SLOT(op), op_name); \
     }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 BINARY_FUNC(PyNumber_Or, nb_or, "|")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 BINARY_FUNC(PyNumber_Xor, nb_xor, "^")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 BINARY_FUNC(PyNumber_And, nb_and, "&")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 BINARY_FUNC(PyNumber_Lshift, nb_lshift, "<<")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 BINARY_FUNC(PyNumber_Rshift, nb_rshift, ">>")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 BINARY_FUNC(PyNumber_Subtract, nb_subtract, "-")
+
 BINARY_FUNC(PyNumber_Divmod, nb_divmod, "divmod()")
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 PyNumber_Add(PyObject *v, PyObject *w)
 {
@@ -1192,6 +1222,9 @@ sequence_repeat(ssizeargfunc repeatfunc, PyObject *seq, PyObject *n)
     return res;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 PyNumber_Multiply(PyObject *v, PyObject *w)
 {
@@ -1211,9 +1244,24 @@ PyNumber_Multiply(PyObject *v, PyObject *w)
     return result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 BINARY_FUNC(PyNumber_MatrixMultiply, nb_matrix_multiply, "@")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 BINARY_FUNC(PyNumber_FloorDivide, nb_floor_divide, "//")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 BINARY_FUNC(PyNumber_TrueDivide, nb_true_divide, "/")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 BINARY_FUNC(PyNumber_Remainder, nb_remainder, "%")
 
 PyObject *
@@ -1222,6 +1270,9 @@ PyNumber_Power(PyObject *v, PyObject *w, PyObject *z)
     return ternary_op(v, w, z, NB_SLOT(nb_power), "** or pow()");
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 _PyNumber_PowerNoMod(PyObject *lhs, PyObject *rhs)
 {
@@ -1312,17 +1363,59 @@ ternary_iop(PyObject *v, PyObject *w, PyObject *z, const int iop_slot, const int
         return binary_iop(v, w, NB_SLOT(iop), NB_SLOT(op), op_name); \
     }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 INPLACE_BINOP(PyNumber_InPlaceOr, nb_inplace_or, nb_or, "|=")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 INPLACE_BINOP(PyNumber_InPlaceXor, nb_inplace_xor, nb_xor, "^=")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 INPLACE_BINOP(PyNumber_InPlaceAnd, nb_inplace_and, nb_and, "&=")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 INPLACE_BINOP(PyNumber_InPlaceLshift, nb_inplace_lshift, nb_lshift, "<<=")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 INPLACE_BINOP(PyNumber_InPlaceRshift, nb_inplace_rshift, nb_rshift, ">>=")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 INPLACE_BINOP(PyNumber_InPlaceSubtract, nb_inplace_subtract, nb_subtract, "-=")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 INPLACE_BINOP(PyNumber_InPlaceMatrixMultiply, nb_inplace_matrix_multiply, nb_matrix_multiply, "@=")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 INPLACE_BINOP(PyNumber_InPlaceFloorDivide, nb_inplace_floor_divide, nb_floor_divide, "//=")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 INPLACE_BINOP(PyNumber_InPlaceTrueDivide, nb_inplace_true_divide, nb_true_divide,  "/=")
+
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 INPLACE_BINOP(PyNumber_InPlaceRemainder, nb_inplace_remainder, nb_remainder, "%=")
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 PyNumber_InPlaceAdd(PyObject *v, PyObject *w)
 {
@@ -1346,6 +1439,9 @@ PyNumber_InPlaceAdd(PyObject *v, PyObject *w)
     return result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 PyNumber_InPlaceMultiply(PyObject *v, PyObject *w)
 {
@@ -1382,6 +1478,9 @@ PyNumber_InPlacePower(PyObject *v, PyObject *w, PyObject *z)
                                 NB_SLOT(nb_power), "**=");
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 _PyNumber_InPlacePowerNoMod(PyObject *lhs, PyObject *rhs)
 {

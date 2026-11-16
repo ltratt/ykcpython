@@ -718,6 +718,8 @@ NON_ESCAPING_FUNCTIONS = (
     "_PyStolenTuple_Free",
     "PyObject_GC_UnTrack",
     "_PyErr_ExceptionMatches",
+    "yk_is_interpreting",
+    "yk_promote"
 )
 
 
