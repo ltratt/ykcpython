@@ -710,6 +710,9 @@ PyLong_AsInt(PyObject *obj)
 /* Get a Py_ssize_t from an int object.
    Returns -1 and sets an error condition if overflow occurs. */
 
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 Py_ssize_t
 PyLong_AsSsize_t(PyObject *vv) {
     PyLongObject *v;
@@ -1284,6 +1287,9 @@ _resolve_endianness(int *endianness)
     return 0;
 }
 
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 Py_ssize_t
 PyLong_AsNativeBytes(PyObject* vv, void* buffer, Py_ssize_t n, int flags)
 {
@@ -5337,6 +5343,9 @@ long_bool(PyObject *v)
    integer right by PyLong_SHIFT*wordshift + remshift bits.
    wordshift should be nonnegative. */
 
+#ifdef USE_YK
+__attribute__((yk_unroll))
+#endif
 static PyObject *
 long_rshift1(PyLongObject *a, Py_ssize_t wordshift, digit remshift)
 {
