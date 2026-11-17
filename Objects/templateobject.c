@@ -300,6 +300,9 @@ template_concat_templates(templateobject *self, templateobject *other)
     return newtemplate;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 _PyTemplate_Concat(PyObject *self, PyObject *other)
 {

@@ -1235,6 +1235,9 @@ deque_contains(PyObject *self, PyObject *v)
     return result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static Py_ssize_t
 deque_len(PyObject *self)
 {
@@ -2409,6 +2412,9 @@ defdict_repr(PyObject *op)
     return result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject*
 defdict_or(PyObject* left, PyObject* right)
 {

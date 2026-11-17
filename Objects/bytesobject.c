@@ -1535,6 +1535,9 @@ bytes_length(PyObject *self)
 }
 
 /* This is also used by PyBytes_Concat() and the specializing interpreter. */
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 _PyBytes_Concat(PyObject *a, PyObject *b)
 {
@@ -1579,6 +1582,9 @@ _PyBytes_Concat(PyObject *a, PyObject *b)
     return result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 bytes_repeat(PyObject *self, Py_ssize_t n)
 {
@@ -1622,6 +1628,9 @@ bytes_contains(PyObject *self, PyObject *arg)
     return _Py_bytes_contains(PyBytes_AS_STRING(self), PyBytes_GET_SIZE(self), arg);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 bytes_item(PyObject *self, Py_ssize_t i)
 {
@@ -1726,6 +1735,21 @@ bytes_hash(PyObject *self)
     return hash;
 }
 
+#ifdef USE_YK
+__attribute__((yk_outline))
+static void bytes_subscript_inner(
+        Py_ssize_t start, Py_ssize_t slicelength, Py_ssize_t step,
+        const char *source_buf, char *result_buf) {
+    Py_ssize_t i;
+    size_t cur;
+    for (cur = start, i = 0; i < slicelength;
+         cur += step, i++) {
+        result_buf[i] = source_buf[cur];
+    }
+}
+
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject*
 bytes_subscript(PyObject *op, PyObject* item)
 {
@@ -1744,8 +1768,12 @@ bytes_subscript(PyObject *op, PyObject* item)
         return _PyLong_FromUnsignedChar((unsigned char)self->ob_sval[i]);
     }
     else if (PySlice_Check(item)) {
+        #ifdef USE_YK
+        Py_ssize_t start, stop, step, slicelength;
+        #else
         Py_ssize_t start, stop, step, slicelength, i;
         size_t cur;
+        #endif
         const char* source_buf;
         char* result_buf;
         PyObject* result;
@@ -1776,10 +1804,14 @@ bytes_subscript(PyObject *op, PyObject* item)
                 return NULL;
 
             result_buf = PyBytes_AS_STRING(result);
+            #ifdef USE_YK
+            bytes_subscript_inner(start, slicelength, step, source_buf, result_buf);
+            #else
             for (cur = start, i = 0; i < slicelength;
                  cur += step, i++) {
                 result_buf[i] = source_buf[cur];
             }
+            #endif
 
             return result;
         }

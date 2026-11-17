@@ -3782,6 +3782,9 @@ _PyDict_SubscriptKnownHash(PyObject *self, PyObject *key, Py_hash_t hash)
     return value;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 _PyDict_Subscript(PyObject *self, PyObject *key)
 {
@@ -5145,6 +5148,9 @@ dict___sizeof___impl(PyDictObject *self)
     return PyLong_FromSsize_t(_PyDict_SizeOf(self));
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 _PyDict_Or(PyObject *self, PyObject *other)
 {
@@ -5163,6 +5169,9 @@ _PyDict_Or(PyObject *self, PyObject *other)
     return new;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 frozendict_or(PyObject *self, PyObject *other)
 {
@@ -5186,6 +5195,9 @@ frozendict_or(PyObject *self, PyObject *other)
 }
 
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 _PyDict_IOr(PyObject *self, PyObject *other)
 {
@@ -6648,6 +6660,9 @@ dictviews_to_set(PyObject *self)
     return PySet_New(left);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject*
 dictviews_sub(PyObject *self, PyObject *other)
 {
@@ -6755,6 +6770,9 @@ error:
     return NULL;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject*
 dictviews_or(PyObject* self, PyObject *other)
 {
@@ -6872,6 +6890,9 @@ dictitems_xor(PyObject *self, PyObject *other)
     return res;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject*
 dictviews_xor(PyObject* self, PyObject *other)
 {

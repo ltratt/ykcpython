@@ -695,6 +695,9 @@ list_contains(PyObject *aa, PyObject *el)
     return 0;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 list_item(PyObject *aa, Py_ssize_t i)
 {
@@ -822,6 +825,9 @@ list_concat_lock_held(PyListObject *a, PyListObject *b)
     return (PyObject *)np;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 _PyList_Concat(PyObject *aa, PyObject *bb)
 {
@@ -882,6 +888,9 @@ list_repeat_lock_held(PyListObject *a, Py_ssize_t n)
     return (PyObject *) np;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 list_repeat(PyObject *aa, Py_ssize_t n)
 {
@@ -1142,6 +1151,9 @@ list_inplace_repeat_lock_held(PyListObject *self, Py_ssize_t n)
     return 0;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 list_inplace_repeat(PyObject *_self, Py_ssize_t n)
 {
@@ -1584,6 +1596,9 @@ PyList_Clear(PyObject *self)
 }
 
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 list_inplace_concat(PyObject *_self, PyObject *other)
 {
@@ -3715,6 +3730,9 @@ _PyList_SliceSubscript(PyObject* _self, PyObject* item)
     return list_slice_subscript(_self, item);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 list_subscript(PyObject* _self, PyObject* item)
 {

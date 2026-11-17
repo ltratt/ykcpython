@@ -893,6 +893,9 @@ static PyMappingMethods odict_as_mapping = {
 
 static int mutablemapping_update_arg(PyObject*, PyObject*);
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 odict_or(PyObject *left, PyObject *right)
 {
@@ -920,6 +923,9 @@ odict_or(PyObject *left, PyObject *right)
     return new;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 odict_inplace_or(PyObject *self, PyObject *other)
 {
