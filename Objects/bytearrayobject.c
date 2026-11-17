@@ -352,6 +352,9 @@ PyByteArray_Resize(PyObject *self, Py_ssize_t requested_size)
     return ret;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 PyByteArray_Concat(PyObject *a, PyObject *b)
 {
@@ -429,6 +432,9 @@ bytearray_iconcat_lock_held(PyObject *op, PyObject *other)
     return Py_NewRef(self);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 bytearray_iconcat(PyObject *op, PyObject *other)
 {
@@ -461,6 +467,9 @@ bytearray_repeat_lock_held(PyObject *op, Py_ssize_t count)
     return (PyObject *)result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 bytearray_repeat(PyObject *op, Py_ssize_t count)
 {
@@ -498,6 +507,9 @@ bytearray_irepeat_lock_held(PyObject *op, Py_ssize_t count)
     return Py_NewRef(self);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 bytearray_irepeat(PyObject *op, Py_ssize_t count)
 {
@@ -520,6 +532,9 @@ bytearray_getitem_lock_held(PyObject *op, Py_ssize_t i)
     return _PyLong_FromUnsignedChar((unsigned char)(self->ob_start[i]));
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 bytearray_getitem(PyObject *op, Py_ssize_t i)
 {

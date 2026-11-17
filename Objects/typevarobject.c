@@ -2121,6 +2121,9 @@ typealias_reduce_impl(typealiasobject *self)
     return Py_NewRef(self->name);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 typealias_subscript(PyObject *op, PyObject *args)
 {

@@ -731,9 +731,21 @@ real_to_complex(PyObject **pobj, Py_complex *pc)
         return PyComplex_FromCComplex(a);                   \
    }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 COMPLEX_BINOP(add, sum)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 COMPLEX_BINOP(mul, prod)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 COMPLEX_BINOP(sub, diff)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 COMPLEX_BINOP(div, quot)
 
 static PyObject *

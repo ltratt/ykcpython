@@ -11355,6 +11355,9 @@ PyUnicode_Contains(PyObject *str, PyObject *substr)
 
 /* Concat to string or Unicode object giving a new Unicode object. */
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 PyObject *
 PyUnicode_Concat(PyObject *left, PyObject *right)
 {
@@ -11703,6 +11706,9 @@ unicode_find_impl(PyObject *str, PyObject *substr, Py_ssize_t start,
     return result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 unicode_getitem(PyObject *self, Py_ssize_t index)
 {
@@ -13803,6 +13809,86 @@ static PySequenceMethods unicode_as_sequence = {
     PyUnicode_Contains, /* sq_contains */
 };
 
+#ifdef USE_YK
+__attribute__((yk_outline))
+static PyObject *
+unicode_subscript_inner(PyObject* self, PyObject* item)
+{
+    if (PySlice_Check(item)) {
+        Py_ssize_t start, stop, step, slicelength, i;
+        size_t cur;
+        PyObject *result;
+        const void *src_data;
+        void *dest_data;
+        int src_kind, dest_kind;
+        Py_UCS4 ch, max_char, kind_limit;
+
+        if (PySlice_Unpack(item, &start, &stop, &step) < 0) {
+            return NULL;
+        }
+        slicelength = PySlice_AdjustIndices(PyUnicode_GET_LENGTH(self),
+                                            &start, &stop, step);
+
+        if (slicelength <= 0) {
+            _Py_RETURN_UNICODE_EMPTY();
+        } else if (start == 0 && step == 1 &&
+                   slicelength == PyUnicode_GET_LENGTH(self)) {
+            return unicode_result_unchanged(self);
+        } else if (step == 1) {
+            return PyUnicode_Substring(self,
+                                       start, start + slicelength);
+        }
+        /* General case */
+        src_kind = PyUnicode_KIND(self);
+        src_data = PyUnicode_DATA(self);
+        if (!PyUnicode_IS_ASCII(self)) {
+            kind_limit = kind_maxchar_limit(src_kind);
+            max_char = 0;
+            for (cur = start, i = 0; i < slicelength; cur += step, i++) {
+                ch = PyUnicode_READ(src_kind, src_data, cur);
+                if (ch > max_char) {
+                    max_char = ch;
+                    if (max_char >= kind_limit)
+                        break;
+                }
+            }
+        }
+        else
+            max_char = 127;
+        result = PyUnicode_New(slicelength, max_char);
+        if (result == NULL)
+            return NULL;
+        dest_kind = PyUnicode_KIND(result);
+        dest_data = PyUnicode_DATA(result);
+
+        for (cur = start, i = 0; i < slicelength; cur += step, i++) {
+            Py_UCS4 ch = PyUnicode_READ(src_kind, src_data, cur);
+            PyUnicode_WRITE(dest_kind, dest_data, i, ch);
+        }
+        assert(_PyUnicode_CheckConsistency(result, 1));
+        return result;
+    } else {
+        PyErr_Format(PyExc_TypeError, "string indices must be integers, not '%.200s'",
+                     Py_TYPE(item)->tp_name);
+        return NULL;
+    }
+}
+
+__attribute__((yk_indirect_inline))
+static PyObject*
+unicode_subscript(PyObject* self, PyObject* item)
+{
+    if (_PyIndex_Check(item)) {
+        Py_ssize_t i = PyNumber_AsSsize_t(item, PyExc_IndexError);
+        if (i == -1 && PyErr_Occurred())
+            return NULL;
+        if (i < 0)
+            i += PyUnicode_GET_LENGTH(self);
+        return unicode_getitem(self, i);
+    }
+    return unicode_subscript_inner(self, item);
+}
+#else
 static PyObject*
 unicode_subscript(PyObject* self, PyObject* item)
 {
@@ -13872,6 +13958,7 @@ unicode_subscript(PyObject* self, PyObject* item)
         return NULL;
     }
 }
+#endif
 
 static PyMappingMethods unicode_as_mapping = {
     unicode_length,     /* mp_length */

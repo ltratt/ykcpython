@@ -424,6 +424,9 @@ tuple_contains(PyObject *self, PyObject *el)
     return cmp;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 tuple_item(PyObject *op, Py_ssize_t i)
 {
@@ -896,6 +899,23 @@ tuple_iteritem(PyObject *obj, Py_ssize_t index)
     return (_PyObjectIndexPair) { .object = result, .index = index + 1 };
 }
 
+#ifdef USE_YK
+__attribute__((yk_outline))
+static void tuple_subscript_inner(
+        Py_ssize_t start, Py_ssize_t slicelength, Py_ssize_t step,
+        PyObject **src, PyObject **dest) {
+    Py_ssize_t i;
+    size_t cur;
+    PyObject *it;
+    for (cur = start, i = 0; i < slicelength;
+         cur += step, i++) {
+        it = Py_NewRef(src[cur]);
+        dest[i] = it;
+    }
+}
+
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject*
 tuple_subscript(PyObject *op, PyObject* item)
 {
@@ -909,9 +929,13 @@ tuple_subscript(PyObject *op, PyObject* item)
         return tuple_item(op, i);
     }
     else if (PySlice_Check(item)) {
+        #ifdef USE_YK
+        Py_ssize_t start, stop, step, slicelength;
+        #else
         Py_ssize_t start, stop, step, slicelength, i;
-        size_t cur;
         PyObject* it;
+        size_t cur;
+        #endif
         PyObject **src, **dest;
 
         if (PySlice_Unpack(item, &start, &stop, &step) < 0) {
@@ -934,11 +958,15 @@ tuple_subscript(PyObject *op, PyObject* item)
 
             src = self->ob_item;
             dest = result->ob_item;
+            #ifdef USE_YK
+            tuple_subscript_inner(start, slicelength, step, src, dest);
+            #else
             for (cur = start, i = 0; i < slicelength;
                  cur += step, i++) {
                 it = Py_NewRef(src[cur]);
                 dest[i] = it;
             }
+            #endif
 
             _PyObject_GC_TRACK(result);
             return (PyObject *)result;

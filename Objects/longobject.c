@@ -3883,6 +3883,9 @@ _PyCompactLong_Add(PyLongObject *a, PyLongObject *b)
     return medium_from_stwodigits(v);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 long_add_method(PyObject *a, PyObject *b)
 {
@@ -3928,6 +3931,9 @@ _PyCompactLong_Subtract(PyLongObject *a, PyLongObject *b)
     return medium_from_stwodigits(v);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 long_sub_method(PyObject *a, PyObject *b)
 {
@@ -4375,6 +4381,9 @@ _PyCompactLong_Multiply(PyLongObject *a, PyLongObject *b)
     return medium_from_stwodigits(v);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 long_mul_method(PyObject *a, PyObject *b)
 {
@@ -4591,6 +4600,9 @@ l_mod(PyLongObject *v, PyLongObject *w, PyLongObject **pmod)
     return 0;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 long_div(PyObject *a, PyObject *b)
 {
@@ -4869,6 +4881,9 @@ long_true_divide(PyObject *v, PyObject *w)
     return NULL;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 long_mod(PyObject *a, PyObject *b)
 {
@@ -4881,6 +4896,9 @@ long_mod(PyObject *a, PyObject *b)
     return (PyObject *)mod;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 long_divmod(PyObject *a, PyObject *b)
 {
@@ -5405,6 +5423,9 @@ long_rshift1(PyLongObject *a, Py_ssize_t wordshift, digit remshift)
     return (PyObject *)z;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 long_rshift(PyObject *a, PyObject *b)
 {
@@ -5503,6 +5524,9 @@ long_lshift1(PyLongObject *a, Py_ssize_t wordshift, digit remshift)
 }
 
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 long_lshift_method(PyObject *aa, PyObject *bb)
 {
@@ -5702,6 +5726,9 @@ long_bitwise(PyLongObject *a,
     return (PyObject *)maybe_small_long(long_normalize(z));
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 long_and(PyObject *a, PyObject *b)
 {
@@ -5714,6 +5741,9 @@ long_and(PyObject *a, PyObject *b)
     return long_bitwise(x, '&', y);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 long_xor(PyObject *a, PyObject *b)
 {
@@ -5726,6 +5756,9 @@ long_xor(PyObject *a, PyObject *b)
     return long_bitwise(x, '^', y);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 long_or(PyObject *a, PyObject *b)
 {

@@ -408,6 +408,9 @@ compute_range_item(rangeobject *r, PyObject *arg)
     return result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 range_item(PyObject *op, Py_ssize_t i)
 {
@@ -731,6 +734,9 @@ range_reduce(PyObject *op, PyObject *args)
                          r->start, r->stop, r->step);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 range_subscript(PyObject *op, PyObject *item)
 {

@@ -182,11 +182,25 @@ PyObject_GetItem(PyObject *o, PyObject *key)
     }
 
     PyMappingMethods *m = Py_TYPE(o)->tp_as_mapping;
+    #ifdef USE_YK
+    if (m) {
+        binaryfunc mp_subscript = m->mp_subscript;
+        if (mp_subscript) {
+            if (!yk_is_interpreting()) {
+                yk_promote(mp_subscript);
+            }
+            PyObject *item = mp_subscript(o, key);
+            assert(_Py_CheckSlotResult(o, "__getitem__", item != NULL));
+            return item;
+        }
+    }
+    #else
     if (m && m->mp_subscript) {
         PyObject *item = m->mp_subscript(o, key);
         assert(_Py_CheckSlotResult(o, "__getitem__", item != NULL));
         return item;
     }
+    #endif
 
     PySequenceMethods *ms = Py_TYPE(o)->tp_as_sequence;
     if (ms && ms->sq_item) {
@@ -988,12 +1002,22 @@ binary_op1(PyObject *v, PyObject *w, const int op_slot
     if (slotv) {
         PyObject *x;
         if (slotw && PyType_IsSubtype(Py_TYPE(w), Py_TYPE(v))) {
+            #ifdef USE_YK
+            if (!yk_is_interpreting()) {
+                yk_promote(slotw);
+            }
+            #endif
             x = slotw(v, w);
             if (x != Py_NotImplemented)
                 return x;
             Py_DECREF(x); /* can't do it */
             slotw = NULL;
         }
+        #ifdef USE_YK
+        if (!yk_is_interpreting()) {
+            yk_promote(slotv);
+        }
+        #endif
         x = slotv(v, w);
         assert(_Py_CheckSlotResult(v, op_name, x != NULL));
         if (x != Py_NotImplemented) {
@@ -1002,6 +1026,11 @@ binary_op1(PyObject *v, PyObject *w, const int op_slot
         Py_DECREF(x); /* can't do it */
     }
     if (slotw) {
+        #ifdef USE_YK
+        if (!yk_is_interpreting()) {
+            yk_promote(slotw);
+        }
+        #endif
         PyObject *x = slotw(v, w);
         assert(_Py_CheckSlotResult(w, op_name, x != NULL));
         if (x != Py_NotImplemented) {
@@ -1195,7 +1224,15 @@ PyNumber_Add(PyObject *v, PyObject *w)
 
     PySequenceMethods *m = Py_TYPE(v)->tp_as_sequence;
     if (m && m->sq_concat) {
+        #ifdef USE_YK
+        binaryfunc func = m->sq_concat;
+        if (!yk_is_interpreting()) {
+            yk_promote(func);
+        }
+        result = func(v, w);
+        #else
         result = (*m->sq_concat)(v, w);
+        #endif
         assert(_Py_CheckSlotResult(v, "+", result != NULL));
         return result;
     }
@@ -1217,6 +1254,11 @@ sequence_repeat(ssizeargfunc repeatfunc, PyObject *seq, PyObject *n)
         return type_error("can't multiply sequence by "
                           "non-int of type '%.200s'", n);
     }
+    #ifdef USE_YK
+    if (!yk_is_interpreting()) {
+        yk_promote(repeatfunc);
+    }
+    #endif
     PyObject *res = (*repeatfunc)(seq, count);
     assert(_Py_CheckSlotResult(seq, "*", res != NULL));
     return res;
@@ -1306,6 +1348,11 @@ binary_iop1(PyObject *v, PyObject *w, const int iop_slot, const int op_slot
     if (mv != NULL) {
         binaryfunc slot = NB_BINOP(mv, iop_slot);
         if (slot) {
+            #ifdef USE_YK
+            if (!yk_is_interpreting()) {
+                yk_promote(slot);
+            }
+            #endif
             PyObject *x = (slot)(v, w);
             assert(_Py_CheckSlotResult(v, op_name, x != NULL));
             if (x != Py_NotImplemented) {
@@ -1429,6 +1476,11 @@ PyNumber_InPlaceAdd(PyObject *v, PyObject *w)
             if (func == NULL)
                 func = m->sq_concat;
             if (func != NULL) {
+                #ifdef USE_YK
+                if (!yk_is_interpreting()) {
+                    yk_promote(func);
+                }
+                #endif
                 result = func(v, w);
                 assert(_Py_CheckSlotResult(v, "+=", result != NULL));
                 return result;
@@ -1967,7 +2019,15 @@ PySequence_GetItem(PyObject *s, Py_ssize_t i)
     if (m && m->sq_item) {
         if (i < 0) {
             if (m->sq_length) {
+                #ifdef USE_YK
+                lenfunc func = m->sq_length;
+                if (!yk_is_interpreting()) {
+                    yk_promote(func);
+                }
+                Py_ssize_t l = func(s);
+                #else
                 Py_ssize_t l = (*m->sq_length)(s);
+                #endif
                 assert(_Py_CheckSlotResult(s, "__len__", l >= 0));
                 if (l < 0) {
                     return NULL;
@@ -1975,7 +2035,15 @@ PySequence_GetItem(PyObject *s, Py_ssize_t i)
                 i += l;
             }
         }
+        #ifdef USE_YK
+        ssizeargfunc sq_item = m->sq_item;
+        if (!yk_is_interpreting()) {
+            yk_promote(sq_item);
+        }
+        PyObject *res = sq_item(s, i);
+        #else
         PyObject *res = m->sq_item(s, i);
+        #endif
         assert(_Py_CheckSlotResult(s, "__getitem__", res != NULL));
         return res;
     }

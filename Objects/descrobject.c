@@ -1048,6 +1048,9 @@ mappingproxy_len(PyObject *self)
     return PyObject_Size(pp->mapping);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 mappingproxy_getitem(PyObject *self, PyObject *key)
 {
@@ -1061,6 +1064,9 @@ static PyMappingMethods mappingproxy_as_mapping = {
     0,                                          /* mp_ass_subscript */
 };
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 mappingproxy_or(PyObject *left, PyObject *right)
 {

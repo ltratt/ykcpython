@@ -538,6 +538,9 @@ float_hash(PyObject *op)
     return _Py_HashDouble(op, v->ob_fval);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 float_add(PyObject *v, PyObject *w)
 {
@@ -548,6 +551,9 @@ float_add(PyObject *v, PyObject *w)
     return PyFloat_FromDouble(a);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 float_sub(PyObject *v, PyObject *w)
 {
@@ -558,6 +564,9 @@ float_sub(PyObject *v, PyObject *w)
     return PyFloat_FromDouble(a);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 float_mul(PyObject *v, PyObject *w)
 {
@@ -568,6 +577,9 @@ float_mul(PyObject *v, PyObject *w)
     return PyFloat_FromDouble(a);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 float_div(PyObject *v, PyObject *w)
 {
@@ -583,6 +595,9 @@ float_div(PyObject *v, PyObject *w)
     return PyFloat_FromDouble(a);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 float_rem(PyObject *v, PyObject *w)
 {
@@ -649,6 +664,9 @@ _float_div_mod(double vx, double wx, double *floordiv, double *mod)
     }
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 float_divmod(PyObject *v, PyObject *w)
 {
@@ -664,6 +682,9 @@ float_divmod(PyObject *v, PyObject *w)
     return Py_BuildValue("(dd)", floordiv, mod);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 float_floor_div(PyObject *v, PyObject *w)
 {

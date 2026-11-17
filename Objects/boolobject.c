@@ -86,6 +86,9 @@ bool_invert(PyObject *v)
     return PyLong_Type.tp_as_number->nb_invert(v);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 bool_and(PyObject *a, PyObject *b)
 {
@@ -94,6 +97,9 @@ bool_and(PyObject *a, PyObject *b)
     return PyBool_FromLong((a == Py_True) & (b == Py_True));
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 bool_or(PyObject *a, PyObject *b)
 {
@@ -102,6 +108,9 @@ bool_or(PyObject *a, PyObject *b)
     return PyBool_FromLong((a == Py_True) | (b == Py_True));
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 bool_xor(PyObject *a, PyObject *b)
 {

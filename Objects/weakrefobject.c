@@ -649,39 +649,114 @@ proxy_richcompare(PyObject *proxy, PyObject *v, int op)
 }
 
 /* number slots */
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_add, PyNumber_Add)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_sub, PyNumber_Subtract)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_mul, PyNumber_Multiply)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_floor_div, PyNumber_FloorDivide)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_true_div, PyNumber_TrueDivide)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_mod, PyNumber_Remainder)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_divmod, PyNumber_Divmod)
 WRAP_TERNARY(proxy_pow, PyNumber_Power)
 WRAP_UNARY(proxy_neg, PyNumber_Negative)
 WRAP_UNARY(proxy_pos, PyNumber_Positive)
 WRAP_UNARY(proxy_abs, PyNumber_Absolute)
 WRAP_UNARY(proxy_invert, PyNumber_Invert)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_lshift, PyNumber_Lshift)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_rshift, PyNumber_Rshift)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_and, PyNumber_And)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_xor, PyNumber_Xor)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_or, PyNumber_Or)
 WRAP_UNARY(proxy_int, PyNumber_Long)
 WRAP_UNARY(proxy_float, PyNumber_Float)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_iadd, PyNumber_InPlaceAdd)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_isub, PyNumber_InPlaceSubtract)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_imul, PyNumber_InPlaceMultiply)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_ifloor_div, PyNumber_InPlaceFloorDivide)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_itrue_div, PyNumber_InPlaceTrueDivide)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_imod, PyNumber_InPlaceRemainder)
 WRAP_TERNARY(proxy_ipow, PyNumber_InPlacePower)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_ilshift, PyNumber_InPlaceLshift)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_irshift, PyNumber_InPlaceRshift)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_iand, PyNumber_InPlaceAnd)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_ixor, PyNumber_InPlaceXor)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_ior, PyNumber_InPlaceOr)
 WRAP_UNARY(proxy_index, PyNumber_Index)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_matmul, PyNumber_MatrixMultiply)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_imatmul, PyNumber_InPlaceMatrixMultiply)
 
 static int
@@ -732,6 +807,9 @@ proxy_length(PyObject *proxy)
     return res;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 WRAP_BINARY(proxy_getitem, PyObject_GetItem)
 
 static int

@@ -10722,6 +10722,9 @@ FUNCNAME(PyObject *self, PyObject *other) \
 #define SLOT1BIN(FUNCNAME, SLOTNAME, DUNDER, RDUNDER) \
     SLOT1BINFULL(FUNCNAME, FUNCNAME, SLOTNAME, DUNDER, RDUNDER)
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static Py_ssize_t
 slot_sq_length(PyObject *self)
 {
@@ -10750,6 +10753,9 @@ slot_sq_length(PyObject *self)
     return len;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 slot_sq_item(PyObject *self, Py_ssize_t i)
 {
@@ -10818,6 +10824,9 @@ slot_sq_contains(PyObject *self, PyObject *value)
 
 #define slot_mp_length slot_sq_length
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1(slot_mp_subscript, __getitem__, PyObject *)
 
 static int
@@ -10842,11 +10851,29 @@ slot_mp_ass_subscript(PyObject *self, PyObject *key, PyObject *value)
     return 0;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1BIN(slot_nb_add, nb_add, __add__, __radd__)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1BIN(slot_nb_subtract, nb_subtract, __sub__, __rsub__)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1BIN(slot_nb_multiply, nb_multiply, __mul__, __rmul__)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1BIN(slot_nb_matrix_multiply, nb_matrix_multiply, __matmul__, __rmatmul__)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1BIN(slot_nb_remainder, nb_remainder, __mod__, __rmod__)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1BIN(slot_nb_divmod, nb_divmod, __divmod__, __rdivmod__)
 
 static PyObject *slot_nb_power(PyObject *, PyObject *, PyObject *);
@@ -10959,18 +10986,48 @@ slot_nb_index(PyObject *self)
 
 
 SLOT0(slot_nb_invert, __invert__)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1BIN(slot_nb_lshift, nb_lshift, __lshift__, __rlshift__)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1BIN(slot_nb_rshift, nb_rshift, __rshift__, __rrshift__)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1BIN(slot_nb_and, nb_and, __and__, __rand__)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1BIN(slot_nb_xor, nb_xor, __xor__, __rxor__)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1BIN(slot_nb_or, nb_or, __or__, __ror__)
 
 SLOT0(slot_nb_int, __int__)
 SLOT0(slot_nb_float, __float__)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1(slot_nb_inplace_add, __iadd__, PyObject *)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1(slot_nb_inplace_subtract, __isub__, PyObject *)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1(slot_nb_inplace_multiply, __imul__, PyObject *)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1(slot_nb_inplace_matrix_multiply, __imatmul__, PyObject *)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1(slot_nb_inplace_remainder, __imod__, PyObject *)
 /* Can't use SLOT1 here, because nb_inplace_power is ternary */
 static PyObject *
@@ -10979,15 +11036,42 @@ slot_nb_inplace_power(PyObject *self, PyObject * arg1, PyObject *arg2)
     PyObject *stack[2] = {self, arg1};
     return vectorcall_method(&_Py_ID(__ipow__), stack, 2);
 }
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1(slot_nb_inplace_lshift, __ilshift__, PyObject *)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1(slot_nb_inplace_rshift, __irshift__, PyObject *)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1(slot_nb_inplace_and, __iand__, PyObject *)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1(slot_nb_inplace_xor, __ixor__, PyObject *)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1(slot_nb_inplace_or, __ior__, PyObject *)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1BIN(slot_nb_floor_divide, nb_floor_divide,
          __floordiv__, __rfloordiv__)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1BIN(slot_nb_true_divide, nb_true_divide, __truediv__, __rtruediv__)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1(slot_nb_inplace_floor_divide, __ifloordiv__, PyObject *)
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 SLOT1(slot_nb_inplace_true_divide, __itruediv__, PyObject *)
 
 static PyObject *

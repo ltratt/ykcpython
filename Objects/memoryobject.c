@@ -2530,6 +2530,9 @@ ptr_from_tuple(const Py_buffer *view, PyObject *tup)
 /* Return the item at index. In a one-dimensional view, this is an object
    with the type specified by view->format. Otherwise, the item is a sub-view.
    The function is used in memory_subscript() and memory_as_sequence. */
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 memory_item(PyObject *_self, Py_ssize_t index)
 {
@@ -2656,6 +2659,9 @@ is_multiindex(PyObject *key)
 
    0-d memoryview objects can be referenced using mv[...] or mv[()]
    but not with anything else. */
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 memory_subscript(PyObject *_self, PyObject *key)
 {
@@ -2822,6 +2828,9 @@ memory_ass_sub(PyObject *_self, PyObject *key, PyObject *value)
     return -1;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static Py_ssize_t
 memory_length(PyObject *_self)
 {

@@ -2451,6 +2451,9 @@ truedivide_timedelta_int(PyDateTime_Delta *delta, PyObject *i)
     return result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 delta_add(PyObject *left, PyObject *right)
 {
@@ -2510,6 +2513,9 @@ delta_abs(PyObject *self)
     return result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 delta_subtract(PyObject *left, PyObject *right)
 {
@@ -3558,6 +3564,9 @@ add_date_timedelta(PyDateTime_Date *date, PyDateTime_Delta *delta, int negate)
     return result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 date_add(PyObject *left, PyObject *right)
 {
@@ -3585,6 +3594,9 @@ date_add(PyObject *left, PyObject *right)
     Py_RETURN_NOTIMPLEMENTED;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 date_subtract(PyObject *left, PyObject *right)
 {
@@ -6265,6 +6277,9 @@ add_datetime_timedelta(PyDateTime_DateTime *date, PyDateTime_Delta *delta,
                                     Py_TYPE(date));
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 datetime_add(PyObject *left, PyObject *right)
 {

@@ -1679,6 +1679,9 @@ set_union_impl(PySetObject *so, PyObject * const *others,
     return (PyObject *)result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 set_or(PyObject *self, PyObject *other)
 {
@@ -1701,6 +1704,9 @@ set_or(PyObject *self, PyObject *other)
     return (PyObject *)result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 set_ior(PyObject *self, PyObject *other)
 {
@@ -1872,6 +1878,9 @@ set_intersection_update_multi_impl(PySetObject *so, PyObject * const *others,
     Py_RETURN_NONE;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 set_and(PyObject *self, PyObject *other)
 {
@@ -1887,6 +1896,9 @@ set_and(PyObject *self, PyObject *other)
     return rv;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 set_iand(PyObject *self, PyObject *other)
 {
@@ -2198,6 +2210,9 @@ set_difference_multi_impl(PySetObject *so, PyObject * const *others,
     return result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 set_sub(PyObject *self, PyObject *other)
 {
@@ -2215,6 +2230,9 @@ set_sub(PyObject *self, PyObject *other)
     return rv;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 set_isub(PyObject *self, PyObject *other)
 {
@@ -2374,6 +2392,9 @@ set_symmetric_difference_impl(PySetObject *so, PyObject *other)
     return (PyObject *)result;
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 set_xor(PyObject *self, PyObject *other)
 {
@@ -2383,6 +2404,9 @@ set_xor(PyObject *self, PyObject *other)
     return set_symmetric_difference((PyObject*)so, other);
 }
 
+#ifdef USE_YK
+__attribute__((yk_indirect_inline))
+#endif
 static PyObject *
 set_ixor(PyObject *self, PyObject *other)
 {
