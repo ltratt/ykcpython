@@ -6185,12 +6185,21 @@ dummy_func(
             if (frame->owner == FRAME_OWNED_BY_THREAD) {
                 _Py_CODEUNIT *dest = frame->instr_ptr;
                 if (dest->op.code == ENTER_EXECUTOR) {
+                    // If an executor exists, use it.
                     PyCodeObject *code = _PyFrame_GetCode(frame);
                     uintptr_t version = FT_ATOMIC_LOAD_UINTPTR_ACQUIRE(code->_co_instrumentation_version);
                     if (_Py_atomic_load_uintptr_relaxed(&tstate->eval_breaker) == version) {
                         tstate->jit_exit = NULL;
                         TIER2_TO_TIER2(code->co_executors->executors[dest->op.arg]);
                     }
+                }
+                else if (dest->op.code < MIN_INSTRUMENTED_OPCODE) {
+                    // Make dynamic exits as likely to form new executors as
+                    // normal side exits. Without this, dynamic exits never
+                    // form executors, causing lots of code to get stuck in
+                    // tier 1.
+                    tstate->jit_exit = (_PyExitData *)exit_p;
+                    TIER2_TO_TIER2(tstate->interp->cold_executor);
                 }
             }
             #endif
@@ -6282,7 +6291,11 @@ dummy_func(
             _PyExitData *exit = tstate->jit_exit;
             assert(exit != NULL);
             assert(frame->owner < FRAME_OWNED_BY_INTERPRETER);
+            #ifdef USE_YK
+            _Py_CODEUNIT *target = exit->is_dynamic ? frame->instr_ptr : _PyFrame_GetBytecode(frame) + exit->target;
+            #else
             _Py_CODEUNIT *target = _PyFrame_GetBytecode(frame) + exit->target;
+            #endif
             _Py_BackoffCounter temperature = exit->temperature;
             _PyExecutorObject *executor;
             if (target->op.code == ENTER_EXECUTOR) {
@@ -6307,7 +6320,14 @@ dummy_func(
                 assert(tstate->current_executor == (PyObject *)previous_executor);
                 // For control-flow guards, we don't want to increase the chain depth, as those don't actually
                 // represent deopts but rather just normal programs!
+                #ifdef USE_YK
+                // If we're creating an executor for a dynamic exit, we want it to be installed at the
+                // destination instruction.
+                int chain_depth = exit->is_dynamic ? 0 :
+                    previous_executor->vm_data.chain_depth + !exit->is_control_flow;
+                #else
                 int chain_depth = previous_executor->vm_data.chain_depth + !exit->is_control_flow;
+                #endif
                 // Note: it's safe to use target->op.arg here instead of the oparg given by EXTENDED_ARG.
                 // The invariant in the optimizer is the deopt target always points back to the first EXTENDED_ARG.
                 // So setting it to anything else is wrong.
