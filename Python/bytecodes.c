@@ -6181,8 +6181,31 @@ dummy_func(
                     _PyOpcode_OpName[target->op.code]);
             }
     #endif
+            #ifdef USE_YK
+            if (!yk_is_interpreting() && frame->owner < FRAME_OWNED_BY_INTERPRETER) {
+                _Py_CODEUNIT *target = frame->instr_ptr;
+                if (target->op.code == ENTER_EXECUTOR) {
+                    // Keep the same instrumentation and pending-event check as ENTER_EXECUTOR.
+                    PyCodeObject *code = _PyFrame_GetCode(frame);
+                    uintptr_t version = FT_ATOMIC_LOAD_UINTPTR_ACQUIRE(code->_co_instrumentation_version);
+                    if (_Py_atomic_load_uintptr_relaxed(&tstate->eval_breaker) == version) {
+                        tstate->jit_exit = NULL;
+                        TIER2_TO_TIER2(code->co_executors->executors[target->op.arg]);
+                    }
+                }
+                else if (target->op.code < MIN_INSTRUMENTED_OPCODE) {
+                    SYNC_SP();
+                    if (yk_trace_dynamic_target(tstate, frame, stack_pointer,
+                                                current_executor, (_PyExitData *)exit_p)) {
+                        GOTO_TIER_ONE_CONTINUE_TRACING(target);
+                    }
+                    GOTO_TIER_ONE(target);
+                }
+            }
+            #else
             // Disabled for now (gh-139109) as it slows down dynamic code tremendously.
             // Compile and jump to the cold dynamic executors in the future.
+            #endif
             GOTO_TIER_ONE(frame->instr_ptr);
         }
 

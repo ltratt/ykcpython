@@ -22897,6 +22897,30 @@
                 stack_pointer = _PyFrame_GetStackPointer(frame);
             }
             #endif
+            #ifdef USE_YK
+            if (!yk_is_interpreting() && frame->owner < FRAME_OWNED_BY_INTERPRETER) {
+                _Py_CODEUNIT *target = frame->instr_ptr;
+                if (target->op.code == ENTER_EXECUTOR) {
+                    PyCodeObject *code = _PyFrame_GetCode(frame);
+                    uintptr_t version = FT_ATOMIC_LOAD_UINTPTR_ACQUIRE(code->_co_instrumentation_version);
+                    if (_Py_atomic_load_uintptr_relaxed(&tstate->eval_breaker) == version) {
+                        tstate->jit_exit = NULL;
+                        SET_CURRENT_CACHED_VALUES(0);
+                        TIER2_TO_TIER2(code->co_executors->executors[target->op.arg]);
+                    }
+                }
+                else if (target->op.code < MIN_INSTRUMENTED_OPCODE) {
+                    if (yk_trace_dynamic_target(tstate, frame, stack_pointer,
+                            current_executor, (_PyExitData *)exit_p)) {
+                        GOTO_TIER_ONE_CONTINUE_TRACING(target);
+                    }
+                    SET_CURRENT_CACHED_VALUES(0);
+                    GOTO_TIER_ONE(target);
+                }
+            }
+            #else
+
+            #endif
             SET_CURRENT_CACHED_VALUES(0);
             GOTO_TIER_ONE(frame->instr_ptr);
         }
@@ -22924,6 +22948,36 @@
                 stack_pointer = _PyFrame_GetStackPointer(frame);
                 stack_pointer += -1;
             }
+            #endif
+            #ifdef USE_YK
+            if (!yk_is_interpreting() && frame->owner < FRAME_OWNED_BY_INTERPRETER) {
+                _Py_CODEUNIT *target = frame->instr_ptr;
+                if (target->op.code == ENTER_EXECUTOR) {
+                    PyCodeObject *code = _PyFrame_GetCode(frame);
+                    uintptr_t version = FT_ATOMIC_LOAD_UINTPTR_ACQUIRE(code->_co_instrumentation_version);
+                    if (_Py_atomic_load_uintptr_relaxed(&tstate->eval_breaker) == version) {
+                        tstate->jit_exit = NULL;
+                        SET_CURRENT_CACHED_VALUES(0);
+                        stack_pointer[0] = _stack_item_0;
+                        stack_pointer += 1;
+                        ASSERT_WITHIN_STACK_BOUNDS(__FILE__, __LINE__);
+                        TIER2_TO_TIER2(code->co_executors->executors[target->op.arg]);
+                    }
+                }
+                else if (target->op.code < MIN_INSTRUMENTED_OPCODE) {
+                    stack_pointer[0] = _stack_item_0;
+                    stack_pointer += 1;
+                    ASSERT_WITHIN_STACK_BOUNDS(__FILE__, __LINE__);
+                    if (yk_trace_dynamic_target(tstate, frame, stack_pointer,
+                            current_executor, (_PyExitData *)exit_p)) {
+                        GOTO_TIER_ONE_CONTINUE_TRACING(target);
+                    }
+                    SET_CURRENT_CACHED_VALUES(0);
+                    GOTO_TIER_ONE(target);
+                }
+            }
+            #else
+
             #endif
             SET_CURRENT_CACHED_VALUES(0);
             stack_pointer[0] = _stack_item_0;
@@ -22957,6 +23011,38 @@
                 stack_pointer = _PyFrame_GetStackPointer(frame);
                 stack_pointer += -2;
             }
+            #endif
+            #ifdef USE_YK
+            if (!yk_is_interpreting() && frame->owner < FRAME_OWNED_BY_INTERPRETER) {
+                _Py_CODEUNIT *target = frame->instr_ptr;
+                if (target->op.code == ENTER_EXECUTOR) {
+                    PyCodeObject *code = _PyFrame_GetCode(frame);
+                    uintptr_t version = FT_ATOMIC_LOAD_UINTPTR_ACQUIRE(code->_co_instrumentation_version);
+                    if (_Py_atomic_load_uintptr_relaxed(&tstate->eval_breaker) == version) {
+                        tstate->jit_exit = NULL;
+                        SET_CURRENT_CACHED_VALUES(0);
+                        stack_pointer[0] = _stack_item_0;
+                        stack_pointer[1] = _stack_item_1;
+                        stack_pointer += 2;
+                        ASSERT_WITHIN_STACK_BOUNDS(__FILE__, __LINE__);
+                        TIER2_TO_TIER2(code->co_executors->executors[target->op.arg]);
+                    }
+                }
+                else if (target->op.code < MIN_INSTRUMENTED_OPCODE) {
+                    stack_pointer[0] = _stack_item_0;
+                    stack_pointer[1] = _stack_item_1;
+                    stack_pointer += 2;
+                    ASSERT_WITHIN_STACK_BOUNDS(__FILE__, __LINE__);
+                    if (yk_trace_dynamic_target(tstate, frame, stack_pointer,
+                            current_executor, (_PyExitData *)exit_p)) {
+                        GOTO_TIER_ONE_CONTINUE_TRACING(target);
+                    }
+                    SET_CURRENT_CACHED_VALUES(0);
+                    GOTO_TIER_ONE(target);
+                }
+            }
+            #else
+
             #endif
             SET_CURRENT_CACHED_VALUES(0);
             stack_pointer[0] = _stack_item_0;
@@ -22993,6 +23079,40 @@
                 stack_pointer = _PyFrame_GetStackPointer(frame);
                 stack_pointer += -3;
             }
+            #endif
+            #ifdef USE_YK
+            if (!yk_is_interpreting() && frame->owner < FRAME_OWNED_BY_INTERPRETER) {
+                _Py_CODEUNIT *target = frame->instr_ptr;
+                if (target->op.code == ENTER_EXECUTOR) {
+                    PyCodeObject *code = _PyFrame_GetCode(frame);
+                    uintptr_t version = FT_ATOMIC_LOAD_UINTPTR_ACQUIRE(code->_co_instrumentation_version);
+                    if (_Py_atomic_load_uintptr_relaxed(&tstate->eval_breaker) == version) {
+                        tstate->jit_exit = NULL;
+                        SET_CURRENT_CACHED_VALUES(0);
+                        stack_pointer[0] = _stack_item_0;
+                        stack_pointer[1] = _stack_item_1;
+                        stack_pointer[2] = _stack_item_2;
+                        stack_pointer += 3;
+                        ASSERT_WITHIN_STACK_BOUNDS(__FILE__, __LINE__);
+                        TIER2_TO_TIER2(code->co_executors->executors[target->op.arg]);
+                    }
+                }
+                else if (target->op.code < MIN_INSTRUMENTED_OPCODE) {
+                    stack_pointer[0] = _stack_item_0;
+                    stack_pointer[1] = _stack_item_1;
+                    stack_pointer[2] = _stack_item_2;
+                    stack_pointer += 3;
+                    ASSERT_WITHIN_STACK_BOUNDS(__FILE__, __LINE__);
+                    if (yk_trace_dynamic_target(tstate, frame, stack_pointer,
+                            current_executor, (_PyExitData *)exit_p)) {
+                        GOTO_TIER_ONE_CONTINUE_TRACING(target);
+                    }
+                    SET_CURRENT_CACHED_VALUES(0);
+                    GOTO_TIER_ONE(target);
+                }
+            }
+            #else
+
             #endif
             SET_CURRENT_CACHED_VALUES(0);
             stack_pointer[0] = _stack_item_0;

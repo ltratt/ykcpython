@@ -202,6 +202,25 @@ class TestUops(unittest.TestCase):
         self.assertIn("_JUMP_TO_TOP", uops)
         self.assertIn("_LOAD_FAST_BORROW_0", uops)
 
+    def test_dynamic_returns_to_different_call_sites(self):
+        def descend(n):
+            if n == 0:
+                return 2
+            if n & 1:
+                return 10 + descend(n - 1)
+            return 3 * descend(n - 1)
+
+        def run(count):
+            total = 0
+            for _ in range(count):
+                total += descend(3) - descend(2)
+            return total
+
+        count = 16 * TIER2_THRESHOLD
+        self.assertEqual(run(count), 10 * count)
+        _testinternalcapi.invalidate_executors(descend.__code__)
+        self.assertEqual(run(count), 10 * count)
+
     def test_extended_arg(self):
         "Check EXTENDED_ARG handling in superblock creation"
         ns = {}

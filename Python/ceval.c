@@ -1410,6 +1410,27 @@ DEF_IDEMPOTENT_LOAD_FIELD(uint16_t, jump_target)
 DEF_IDEMPOTENT_LOAD_FIELD(uint16_t, error_target)
 DEF_IDEMPOTENT_LOAD_FIELD(uint64_t, operand0)
 DEF_IDEMPOTENT_LOAD_FIELD(uint64_t, operand1)
+
+// Start a new executor at the destination. Its normal entry location lets yk
+// couple to it on future visits. The same exit can reach several destinations,
+// so leave the exit unlinked and require progress before installing the executor.
+__attribute__((yk_outline))
+static int
+yk_trace_dynamic_target(PyThreadState *tstate, _PyInterpreterFrame *frame,
+                        _PyStackRef *stack_pointer, _PyExecutorObject *executor,
+                        _PyExitData *exit)
+{
+    _Py_BackoffCounter temperature = exit->temperature;
+    if (!backoff_counter_triggers(temperature)) {
+        exit->temperature = advance_backoff_counter(temperature);
+        return 0;
+    }
+    _Py_CODEUNIT *target = frame->instr_ptr;
+    int started = _PyJit_TryInitializeTracing(tstate, frame, target, target,
+        target, stack_pointer, 0, exit, target->op.arg, executor);
+    exit->temperature = restart_backoff_counter(temperature);
+    return started;
+}
 #endif
 
 _Py_CODEUNIT *
