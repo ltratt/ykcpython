@@ -8590,7 +8590,7 @@
                 PyObject *owner_o = PyStackRef_AsPyObjectBorrow(owner);
                 assert(Py_TYPE(owner_o)->tp_dictoffset < 0);
                 assert(Py_TYPE(owner_o)->tp_flags & Py_TPFLAGS_INLINE_VALUES);
-                if (!FT_ATOMIC_LOAD_UINT8(_PyObject_InlineValues(owner_o)->valid)) {
+                if (!FT_ATOMIC_LOAD_UINT8(INLINE_VALUES_FOR_GUARD(owner_o)->valid)) {
                     UPDATE_MISS_STATS(LOAD_ATTR);
                     assert(_PyOpcode_Deopt[opcode] == (LOAD_ATTR));
                     JUMP_TO_PREDICTED(LOAD_ATTR);
@@ -8776,8 +8776,7 @@
             {
                 PyObject *owner_o = PyStackRef_AsPyObjectBorrow(owner);
                 assert(Py_TYPE(owner_o)->tp_flags & Py_TPFLAGS_INLINE_VALUES);
-                PyDictValues *ivs = _PyObject_InlineValues(owner_o);
-                if (!FT_ATOMIC_LOAD_UINT8(ivs->valid)) {
+                if (!FT_ATOMIC_LOAD_UINT8(INLINE_VALUES_FOR_GUARD(owner_o)->valid)) {
                     UPDATE_MISS_STATS(LOAD_ATTR);
                     assert(_PyOpcode_Deopt[opcode] == (LOAD_ATTR));
                     JUMP_TO_PREDICTED(LOAD_ATTR);
@@ -8970,8 +8969,7 @@
             {
                 PyObject *owner_o = PyStackRef_AsPyObjectBorrow(owner);
                 assert(Py_TYPE(owner_o)->tp_flags & Py_TPFLAGS_INLINE_VALUES);
-                PyDictValues *ivs = _PyObject_InlineValues(owner_o);
-                if (!FT_ATOMIC_LOAD_UINT8(ivs->valid)) {
+                if (!FT_ATOMIC_LOAD_UINT8(INLINE_VALUES_FOR_GUARD(owner_o)->valid)) {
                     UPDATE_MISS_STATS(LOAD_ATTR);
                     assert(_PyOpcode_Deopt[opcode] == (LOAD_ATTR));
                     JUMP_TO_PREDICTED(LOAD_ATTR);

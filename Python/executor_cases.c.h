@@ -12034,7 +12034,7 @@
             PyObject *owner_o = PyStackRef_AsPyObjectBorrow(owner);
             assert(Py_TYPE(owner_o)->tp_dictoffset < 0);
             assert(Py_TYPE(owner_o)->tp_flags & Py_TPFLAGS_INLINE_VALUES);
-            if (!FT_ATOMIC_LOAD_UINT8(_PyObject_InlineValues(owner_o)->valid)) {
+            if (!FT_ATOMIC_LOAD_UINT8(INLINE_VALUES_FOR_GUARD(owner_o)->valid)) {
                 UOP_STAT_INC(uopcode, miss);
                 SET_CURRENT_CACHED_VALUES(0);
                 JUMP_TO_JUMP_TARGET();
@@ -12056,7 +12056,7 @@
             PyObject *owner_o = PyStackRef_AsPyObjectBorrow(owner);
             assert(Py_TYPE(owner_o)->tp_dictoffset < 0);
             assert(Py_TYPE(owner_o)->tp_flags & Py_TPFLAGS_INLINE_VALUES);
-            if (!FT_ATOMIC_LOAD_UINT8(_PyObject_InlineValues(owner_o)->valid)) {
+            if (!FT_ATOMIC_LOAD_UINT8(INLINE_VALUES_FOR_GUARD(owner_o)->valid)) {
                 UOP_STAT_INC(uopcode, miss);
                 _tos_cache0 = owner;
                 SET_CURRENT_CACHED_VALUES(1);
@@ -12078,7 +12078,7 @@
             PyObject *owner_o = PyStackRef_AsPyObjectBorrow(owner);
             assert(Py_TYPE(owner_o)->tp_dictoffset < 0);
             assert(Py_TYPE(owner_o)->tp_flags & Py_TPFLAGS_INLINE_VALUES);
-            if (!FT_ATOMIC_LOAD_UINT8(_PyObject_InlineValues(owner_o)->valid)) {
+            if (!FT_ATOMIC_LOAD_UINT8(INLINE_VALUES_FOR_GUARD(owner_o)->valid)) {
                 UOP_STAT_INC(uopcode, miss);
                 _tos_cache1 = owner;
                 _tos_cache0 = _stack_item_0;
@@ -12103,7 +12103,7 @@
             PyObject *owner_o = PyStackRef_AsPyObjectBorrow(owner);
             assert(Py_TYPE(owner_o)->tp_dictoffset < 0);
             assert(Py_TYPE(owner_o)->tp_flags & Py_TPFLAGS_INLINE_VALUES);
-            if (!FT_ATOMIC_LOAD_UINT8(_PyObject_InlineValues(owner_o)->valid)) {
+            if (!FT_ATOMIC_LOAD_UINT8(INLINE_VALUES_FOR_GUARD(owner_o)->valid)) {
                 UOP_STAT_INC(uopcode, miss);
                 _tos_cache2 = owner;
                 _tos_cache1 = _stack_item_1;
@@ -16264,8 +16264,7 @@
             owner = stack_pointer[-1];
             PyObject *owner_o = PyStackRef_AsPyObjectBorrow(owner);
             assert(Py_TYPE(owner_o)->tp_flags & Py_TPFLAGS_INLINE_VALUES);
-            PyDictValues *ivs = _PyObject_InlineValues(owner_o);
-            if (!FT_ATOMIC_LOAD_UINT8(ivs->valid)) {
+            if (!FT_ATOMIC_LOAD_UINT8(INLINE_VALUES_FOR_GUARD(owner_o)->valid)) {
                 UOP_STAT_INC(uopcode, miss);
                 SET_CURRENT_CACHED_VALUES(0);
                 JUMP_TO_JUMP_TARGET();
@@ -16286,8 +16285,7 @@
             owner = _stack_item_0;
             PyObject *owner_o = PyStackRef_AsPyObjectBorrow(owner);
             assert(Py_TYPE(owner_o)->tp_flags & Py_TPFLAGS_INLINE_VALUES);
-            PyDictValues *ivs = _PyObject_InlineValues(owner_o);
-            if (!FT_ATOMIC_LOAD_UINT8(ivs->valid)) {
+            if (!FT_ATOMIC_LOAD_UINT8(INLINE_VALUES_FOR_GUARD(owner_o)->valid)) {
                 UOP_STAT_INC(uopcode, miss);
                 _tos_cache0 = owner;
                 SET_CURRENT_CACHED_VALUES(1);
@@ -16308,8 +16306,7 @@
             owner = _stack_item_1;
             PyObject *owner_o = PyStackRef_AsPyObjectBorrow(owner);
             assert(Py_TYPE(owner_o)->tp_flags & Py_TPFLAGS_INLINE_VALUES);
-            PyDictValues *ivs = _PyObject_InlineValues(owner_o);
-            if (!FT_ATOMIC_LOAD_UINT8(ivs->valid)) {
+            if (!FT_ATOMIC_LOAD_UINT8(INLINE_VALUES_FOR_GUARD(owner_o)->valid)) {
                 UOP_STAT_INC(uopcode, miss);
                 _tos_cache1 = owner;
                 _tos_cache0 = _stack_item_0;
@@ -16333,8 +16330,7 @@
             owner = _stack_item_2;
             PyObject *owner_o = PyStackRef_AsPyObjectBorrow(owner);
             assert(Py_TYPE(owner_o)->tp_flags & Py_TPFLAGS_INLINE_VALUES);
-            PyDictValues *ivs = _PyObject_InlineValues(owner_o);
-            if (!FT_ATOMIC_LOAD_UINT8(ivs->valid)) {
+            if (!FT_ATOMIC_LOAD_UINT8(INLINE_VALUES_FOR_GUARD(owner_o)->valid)) {
                 UOP_STAT_INC(uopcode, miss);
                 _tos_cache2 = owner;
                 _tos_cache1 = _stack_item_1;

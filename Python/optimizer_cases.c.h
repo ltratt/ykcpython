@@ -2675,6 +2675,12 @@
         }
 
         case _CHECK_MANAGED_OBJECT_HAS_VALUES: {
+            JitOptRef owner;
+            owner = stack_pointer[-1];
+            #ifdef USE_YK
+            PyTypeObject *type = sym_get_type(owner);
+            this_instr->operand0 = type ? type->tp_basicsize : 0;
+            #endif
             break;
         }
 
@@ -3961,6 +3967,12 @@
         }
 
         case _GUARD_DORV_VALUES_INST_ATTR_FROM_DICT: {
+            JitOptRef owner;
+            owner = stack_pointer[-1];
+            #ifdef USE_YK
+            PyTypeObject *type = sym_get_type(owner);
+            this_instr->operand0 = type ? type->tp_basicsize : 0;
+            #endif
             break;
         }
 

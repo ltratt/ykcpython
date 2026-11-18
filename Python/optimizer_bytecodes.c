@@ -138,6 +138,20 @@ dummy_func(void) {
         assert(!PyJitRef_IsUnique(value));
     }
 
+    op(_CHECK_MANAGED_OBJECT_HAS_VALUES, (owner -- owner)) {
+        #ifdef USE_YK
+        PyTypeObject *type = sym_get_type(owner);
+        this_instr->operand0 = type ? type->tp_basicsize : 0;
+        #endif
+    }
+
+    op(_GUARD_DORV_VALUES_INST_ATTR_FROM_DICT, (owner -- owner)) {
+        #ifdef USE_YK
+        PyTypeObject *type = sym_get_type(owner);
+        this_instr->operand0 = type ? type->tp_basicsize : 0;
+        #endif
+    }
+
     op(_GUARD_TYPE_VERSION_LOCKED, (type_version/2, owner -- owner)) {
         assert(type_version);
         if (sym_matches_type_version(owner, type_version)) {

@@ -1411,6 +1411,17 @@ DEF_IDEMPOTENT_LOAD_FIELD(uint16_t, error_target)
 DEF_IDEMPOTENT_LOAD_FIELD(uint64_t, operand0)
 DEF_IDEMPOTENT_LOAD_FIELD(uint64_t, operand1)
 
+// The optimiser records the inline-values offset when it knows the owner type.
+// A zero operand leaves the ordinary layout lookup in place.
+static inline PyDictValues *
+yk_inline_values_for_guard(PyObject *owner, size_t offset)
+{
+    return offset ? (PyDictValues *)((char *)owner + offset) : _PyObject_InlineValues(owner);
+}
+
+#undef INLINE_VALUES_FOR_GUARD
+#define INLINE_VALUES_FOR_GUARD(owner) yk_inline_values_for_guard(owner, CURRENT_OPERAND0_64())
+
 // Start a new executor at the destination. Its normal entry location lets yk
 // couple to it on future visits. The same exit can reach several destinations,
 // so leave the exit unlinked and require progress before installing the executor.

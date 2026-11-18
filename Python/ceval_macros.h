@@ -480,6 +480,8 @@ do {                                                   \
     goto tier2_start;                                  \
 } while (0)
 
+#define INLINE_VALUES_FOR_GUARD(owner) _PyObject_InlineValues(owner)
+
 #define GOTO_TIER_ONE_SETUP \
     tstate->current_executor = NULL;                              \
     OPT_HIST(trace_uop_execution_counter, trace_run_length_hist); \
