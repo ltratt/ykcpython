@@ -22897,6 +22897,20 @@
                 stack_pointer = _PyFrame_GetStackPointer(frame);
             }
             #endif
+            #ifdef USE_YK
+            if (frame->owner == FRAME_OWNED_BY_THREAD) {
+                _Py_CODEUNIT *dest = frame->instr_ptr;
+                if (dest->op.code == ENTER_EXECUTOR) {
+                    PyCodeObject *code = _PyFrame_GetCode(frame);
+                    uintptr_t version = FT_ATOMIC_LOAD_UINTPTR_ACQUIRE(code->_co_instrumentation_version);
+                    if (_Py_atomic_load_uintptr_relaxed(&tstate->eval_breaker) == version) {
+                        tstate->jit_exit = NULL;
+                        SET_CURRENT_CACHED_VALUES(0);
+                        TIER2_TO_TIER2(code->co_executors->executors[dest->op.arg]);
+                    }
+                }
+            }
+            #endif
             SET_CURRENT_CACHED_VALUES(0);
             GOTO_TIER_ONE(frame->instr_ptr);
         }
@@ -22923,6 +22937,23 @@
                        _PyOpcode_OpName[target->op.code]);
                 stack_pointer = _PyFrame_GetStackPointer(frame);
                 stack_pointer += -1;
+            }
+            #endif
+            #ifdef USE_YK
+            if (frame->owner == FRAME_OWNED_BY_THREAD) {
+                _Py_CODEUNIT *dest = frame->instr_ptr;
+                if (dest->op.code == ENTER_EXECUTOR) {
+                    PyCodeObject *code = _PyFrame_GetCode(frame);
+                    uintptr_t version = FT_ATOMIC_LOAD_UINTPTR_ACQUIRE(code->_co_instrumentation_version);
+                    if (_Py_atomic_load_uintptr_relaxed(&tstate->eval_breaker) == version) {
+                        tstate->jit_exit = NULL;
+                        SET_CURRENT_CACHED_VALUES(0);
+                        stack_pointer[0] = _stack_item_0;
+                        stack_pointer += 1;
+                        ASSERT_WITHIN_STACK_BOUNDS(__FILE__, __LINE__);
+                        TIER2_TO_TIER2(code->co_executors->executors[dest->op.arg]);
+                    }
+                }
             }
             #endif
             SET_CURRENT_CACHED_VALUES(0);
@@ -22956,6 +22987,24 @@
                        _PyOpcode_OpName[target->op.code]);
                 stack_pointer = _PyFrame_GetStackPointer(frame);
                 stack_pointer += -2;
+            }
+            #endif
+            #ifdef USE_YK
+            if (frame->owner == FRAME_OWNED_BY_THREAD) {
+                _Py_CODEUNIT *dest = frame->instr_ptr;
+                if (dest->op.code == ENTER_EXECUTOR) {
+                    PyCodeObject *code = _PyFrame_GetCode(frame);
+                    uintptr_t version = FT_ATOMIC_LOAD_UINTPTR_ACQUIRE(code->_co_instrumentation_version);
+                    if (_Py_atomic_load_uintptr_relaxed(&tstate->eval_breaker) == version) {
+                        tstate->jit_exit = NULL;
+                        SET_CURRENT_CACHED_VALUES(0);
+                        stack_pointer[0] = _stack_item_0;
+                        stack_pointer[1] = _stack_item_1;
+                        stack_pointer += 2;
+                        ASSERT_WITHIN_STACK_BOUNDS(__FILE__, __LINE__);
+                        TIER2_TO_TIER2(code->co_executors->executors[dest->op.arg]);
+                    }
+                }
             }
             #endif
             SET_CURRENT_CACHED_VALUES(0);
@@ -22992,6 +23041,25 @@
                        _PyOpcode_OpName[target->op.code]);
                 stack_pointer = _PyFrame_GetStackPointer(frame);
                 stack_pointer += -3;
+            }
+            #endif
+            #ifdef USE_YK
+            if (frame->owner == FRAME_OWNED_BY_THREAD) {
+                _Py_CODEUNIT *dest = frame->instr_ptr;
+                if (dest->op.code == ENTER_EXECUTOR) {
+                    PyCodeObject *code = _PyFrame_GetCode(frame);
+                    uintptr_t version = FT_ATOMIC_LOAD_UINTPTR_ACQUIRE(code->_co_instrumentation_version);
+                    if (_Py_atomic_load_uintptr_relaxed(&tstate->eval_breaker) == version) {
+                        tstate->jit_exit = NULL;
+                        SET_CURRENT_CACHED_VALUES(0);
+                        stack_pointer[0] = _stack_item_0;
+                        stack_pointer[1] = _stack_item_1;
+                        stack_pointer[2] = _stack_item_2;
+                        stack_pointer += 3;
+                        ASSERT_WITHIN_STACK_BOUNDS(__FILE__, __LINE__);
+                        TIER2_TO_TIER2(code->co_executors->executors[dest->op.arg]);
+                    }
+                }
             }
             #endif
             SET_CURRENT_CACHED_VALUES(0);

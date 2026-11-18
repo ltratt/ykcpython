@@ -6181,6 +6181,19 @@ dummy_func(
                     _PyOpcode_OpName[target->op.code]);
             }
     #endif
+            #ifdef USE_YK
+            if (frame->owner == FRAME_OWNED_BY_THREAD) {
+                _Py_CODEUNIT *dest = frame->instr_ptr;
+                if (dest->op.code == ENTER_EXECUTOR) {
+                    PyCodeObject *code = _PyFrame_GetCode(frame);
+                    uintptr_t version = FT_ATOMIC_LOAD_UINTPTR_ACQUIRE(code->_co_instrumentation_version);
+                    if (_Py_atomic_load_uintptr_relaxed(&tstate->eval_breaker) == version) {
+                        tstate->jit_exit = NULL;
+                        TIER2_TO_TIER2(code->co_executors->executors[dest->op.arg]);
+                    }
+                }
+            }
+            #endif
             // Disabled for now (gh-139109) as it slows down dynamic code tremendously.
             // Compile and jump to the cold dynamic executors in the future.
             GOTO_TIER_ONE(frame->instr_ptr);
