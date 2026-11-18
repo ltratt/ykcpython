@@ -1,6 +1,9 @@
 /* Type object implementation */
 
 #include "Python.h"
+#ifdef USE_YK
+#include <yk.h>
+#endif
 #include "pycore_abstract.h"      // _PySequence_IterSearch()
 #include "pycore_call.h"          // _PyObject_VectorcallTstate()
 #include "pycore_code.h"          // CO_FAST_FREE
@@ -2548,6 +2551,17 @@ _PyType_NewManagedObject(PyTypeObject *type)
     return obj;
 }
 
+#ifdef USE_YK
+// _PyType_AllocNoTrack is also reached from outlined functions. Keep the
+// promotion in a separate function, as for the vectorcall slot.
+__attribute__((noinline))
+static size_t
+promote_instance_size(size_t size)
+{
+    return yk_promote(size);
+}
+#endif
+
 PyObject *
 _PyType_AllocNoTrack(PyTypeObject *type, Py_ssize_t nitems)
 {
@@ -2564,6 +2578,13 @@ _PyType_AllocNoTrack(PyTypeObject *type, Py_ssize_t nitems)
     if (type->tp_flags & Py_TPFLAGS_INLINE_VALUES) {
         assert(type->tp_itemsize == 0);
         size += _PyInlineValuesSize(type);
+#ifdef USE_YK
+        // The shared-key capacity usually settles after the first instances.
+        // Specialise the zero fill on the complete size, including inline values.
+        if (!yk_is_interpreting()) {
+            size = promote_instance_size(size);
+        }
+#endif
     }
     char *alloc = _PyObject_MallocWithType(type, size + presize);
     if (alloc  == NULL) {
